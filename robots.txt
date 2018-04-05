@@ -10,4 +10,6 @@ Disallow: /vendors/
 Disallow: /fancybox/
 
 Sitemap: http://nibo.blog/sitemap.xml
+Sitemap: https://nibo.blog/sitemap.xml
 Sitemap: http://nibo.blog/baidusitemap.xml
+Sitemap: https://nibo.blog/baidusitemap.xml
