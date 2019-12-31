@@ -10,9 +10,6 @@
 
     <!--Description-->
     
-        <meta name="description" content="VSCode，即  Visual Studio Code ，是 微软 的一个开源编辑器。快速、稳定，内置调试、git ，并且有类似 atom 和 sublime 的插件扩展机制。现在我基本以此来作为 Web 开发的编辑器，强烈推荐给大家。
-背景每次新建一个项目免不了配置 .editorconfig文">
-    
 
     <!--Author-->
     
@@ -20,8 +17,6 @@
     
 
     <!--Open Graph Title-->
-    
-        <meta property="og:title" content="第一个 vscode 插件"/>
     
 
     <!--Open Graph Site Name-->
@@ -37,7 +32,7 @@
     
     <!-- Title -->
     
-    <title>第一个 vscode 插件 - 修行日誌</title>
+    <title>归档：2020/1 - 修行日誌</title>
 
     <!-- Bootstrap Core CSS -->
     <!-- <link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css"> -->
@@ -119,99 +114,52 @@
 </nav>
 
     <!-- Main Content -->
-    <!-- Page Header -->
-<!-- Set your background image for this header in your post front-matter: cover -->
+    
 
+<!-- Page Header -->
+<!-- Set your background image for this header in the theme's configuration: index_cover -->
 <header class="intro-header" style="background-image: url('//poe-blog.oss-cn-hangzhou.aliyuncs.com/images/photo-1512415047789-055da07059ee.jpeg.jpg')">
     <div class="container">
         <div class="row">
             <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
-                <div class="post-heading">
-                    <h1>第一个 vscode 插件</h1>
-                    
-                    <span class="meta">
-                        <!-- Date and Author -->
-                        
-                            Posted by poe on
-                        
-                        2017-02-08
-                    </span>
+                <div class="site-heading">
+                    <h1>2020/1</h1>
                 </div>
             </div>
         </div>
     </div>
 </header>
 
-<!-- Post Content -->
-<article>
-    <div class="container">
-        <div class="row">
-
-            <!-- Tags and categories -->
-           
-                <div class="col-lg-4 col-lg-offset-2 col-md-5 col-md-offset-1 post-tags">
-                    
-                        
-
-
-<a href="/tags/tools/">#tools</a>
-
-
-                    
-                </div>
-                <div class="col-lg-4 col-md-5 post-categories">
-                    
-                </div>
+<!-- Main Content -->
+<div class="container">
+    <div class="row">
+        <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
             
-
-            <!-- Gallery -->
+                <div class="post-preview">
+    <a href="/2020.html">
+        <h1 class="post-title archive">
+            2020
+        </h1>
+    </a>
+    <p class="post-meta archive">
+        <!-- Date and Author -->
+        
+            Posted by poe on
+        
+        2020-01-01
+    </p>
+</div>
             
-
-            <!-- Post Main Content -->
-            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
-                <p>VSCode，即  <a href="https://code.visualstudio.com/" target="_blank" rel="noopener">Visual Studio Code</a> ，是 微软 的一个开源编辑器。快速、稳定，内置调试、git ，并且有类似 atom 和 sublime 的插件扩展机制。现在我基本以此来作为 Web 开发的编辑器，强烈推荐给大家。</p>
-<h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>每次新建一个项目免不了配置 <code>.editorconfig</code>文件（可以从 <a href="http://editorconfig.org" target="_blank" rel="noopener">官网</a> 进一步了解 editorconfig ），里面的内容大同小异。<br>每次手工配置很麻烦，想通过一个命令智能生成常规的 <code>.editorconfig</code>文件，内容大致如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"># http://editorconfig.org</span><br><span class="line">root = true</span><br><span class="line"></span><br><span class="line">[*]</span><br><span class="line">indent_style = space</span><br><span class="line">indent_size = 2</span><br><span class="line">end_of_line = lf</span><br><span class="line">charset = utf-8</span><br><span class="line">trim_trailing_whitespace = true</span><br><span class="line">insert_final_newline = true</span><br><span class="line"></span><br><span class="line">[*.md]</span><br><span class="line">trim_trailing_whitespace = false</span><br></pre></td></tr></table></figure></p>
-<p>搜索了 Extensions Marketplace，发现有一个 <a href="https://marketplace.visualstudio.com/items?itemName=EditorConfig.EditorConfig" target="_blank" rel="noopener">EditorConfig for VS Code</a>插件功能类似，但是生成的文件内容还是不满足我的项目常用配置（内容如下）<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">root = true</span><br><span class="line"></span><br><span class="line">[*]</span><br><span class="line">indent_style = space</span><br><span class="line">indent_size = 2</span><br></pre></td></tr></table></figure></p>
-<p>索性自己写一个！</p>
-<h2 id="前期准备"><a href="#前期准备" class="headerlink" title="前期准备"></a>前期准备</h2><ol>
-<li>注册一个 <a href="https://go.microsoft.com/fwlink/?LinkId=307137" target="_blank" rel="noopener">Visual Studio Team Services</a> 的帐号，以便后续编写以及发布插件到 <a href="https://marketplace.visualstudio.com" target="_blank" rel="noopener">Marketplace</a> （ <a href="https://www.visualstudio.com/en-us/docs/setup-admin/team-services/sign-up-for-visual-studio-team-services#MicrosoftAccount" target="_blank" rel="noopener">详细步骤</a> ）。</li>
-<li>步骤1 中的帐号主页中添加一个 Personal Access Token （ <a href="https://code.visualstudio.com/docs/tools/vscecli#_get-a-personal-access-token" target="_blank" rel="noopener">详细步骤</a> ）</li>
-<li>安装 发布工具 <strong>vsce</strong>：<code>npm install -g vsce</code>（当然这需要 NodeJS 环境）。</li>
-<li>创建一个发布者：<code>vsce create-publisher (your publisher name)</code>，交互过程中会需要输入 <strong>步骤2</strong> 中生成的 Token。vsce 会记录该 Token。</li>
-<li>安装 <a href="https://code.visualstudio.com/docs/tools/yocode" target="_blank" rel="noopener">yocode</a> ：<code>npm install -g yo generator-code</code>。可以通过 Yo Code 这个工具快速生成一个插件工程。</li>
-</ol>
-<h2 id="编码及发布"><a href="#编码及发布" class="headerlink" title="编码及发布"></a>编码及发布</h2><blockquote>
-<p>:v:插件的代码已经发布到 <a href="https://github.com/nepaul/editorconfig-generator" target="_blank" rel="noopener">github</a> :v:</p>
-</blockquote>
-<p>生成一个 插件工程：<code>yo code</code>，会有一些交互，基本默认就好。<br>主要关注 <code>package.json</code> 和 <code>extension.js</code>这两个文件，前者主要是插件的基本配置，后者是插件代码的入口主文件。</p>
-<h3 id="package-json"><a href="#package-json" class="headerlink" title="package.json"></a>package.json</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    &quot;name&quot;: &quot;editorconfiggenerator&quot;,</span><br><span class="line">    &quot;activationEvents&quot;: [</span><br><span class="line">        &quot;onCommand:extension.generateEditorConfig&quot;</span><br><span class="line">    ],</span><br><span class="line">    &quot;main&quot;: &quot;./src/extension&quot;,</span><br><span class="line">    &quot;contributes&quot;: &#123;</span><br><span class="line">        &quot;commands&quot;: [</span><br><span class="line">            &#123;</span><br><span class="line">                &quot;command&quot;: &quot;extension.generateEditorConfig&quot;,</span><br><span class="line">                &quot;title&quot;: &quot;GenerateEditorConfig&quot;</span><br><span class="line">            &#125;</span><br><span class="line">        ]</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p><code>extension.generateEditorConfig</code>：代码中注册的触发事件，command 相关的字段中必须统一<br><code>GenerateEditorConfig</code> （commands -&gt; title 字段值）：shift + cmd + p 调出的命令行中输入的值。</p>
-<h3 id="发布"><a href="#发布" class="headerlink" title="发布"></a>发布</h3><p>发布前建议好好书写 README.md 文件，以让用户知道这个插件的作用和使用方法。<br>发布的命令很简单：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cd your-extension-project-directory</span><br><span class="line">vsce publish 语义化版本号</span><br></pre></td></tr></table></figure></p>
-<p>不了解<strong>语义化版本号</strong>的同学可以看 <a href="http://semver.org/" target="_blank" rel="noopener">官网资料</a><br>vsce 提供了自动增加的版本号机制：major，minor，patch，例如： <code>vsce publish major</code></p>
-<p>另外，我的插件 <a href="https://marketplace.visualstudio.com/items?itemName=nepaul.editorconfiggenerator" target="_blank" rel="noopener">EditorConfigGenerator</a> 已经发布了，欢迎使用。 </p>
-<h2 id="参考文档"><a href="#参考文档" class="headerlink" title="参考文档"></a>参考文档</h2><ol>
-<li><a href="https://code.visualstudio.com/docs/extensions/overview" target="_blank" rel="noopener">基本介绍及教程</a></li>
-<li><a href="https://code.visualstudio.com/docs/extensionAPI/overview" target="_blank" rel="noopener">API 文档</a></li>
-<li><a href="https://code.visualstudio.com/docs/tools/vscecli" target="_blank" rel="noopener">辅助工具</a></li>
-</ol>
-
-            </div>
-
-            <!-- Comments -->
-            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
-                
-    <hr />
-    <h3>留言:</h3>
-    <div id="disqus_thread">
-        <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-    </div>
-
-
-
-            </div>
+            <div class="archive-before-pagination"></div>
+            <ul class="pager">
+    
+    
+</ul>
         </div>
     </div>
-</article>
+</div>
+
+
 
     <!-- Footer -->
     <hr />
@@ -278,7 +226,7 @@
         var dsq = document.createElement('script');
         dsq.type = 'text/javascript';
         dsq.async = true;
-        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
         (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
     }());
 </script>
