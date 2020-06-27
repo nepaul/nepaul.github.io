@@ -178,7 +178,7 @@
 <li>项目目录<br>├── client<br>│   ├── Dockerfile<br>│   ├── .dockerignore<br>│   ├── dist<br>│   ├── etc<br>│   │   └── nginx.conf<br>├── server<br>│   ├── Dockerfile<br>│   ├── .dockerignore<br>│   ├── source-dir<br>├── docker-compose.yml</li>
 <li>主要目的阐述</li>
 <li>client 下的 <code>Dockerfile</code>（Nginx 反向代理静态资源和 API 服务）<ol>
-<li>以 <a href="https://store.docker.com/images/nginx" target="_blank" rel="noopener">Nginx</a> 为基础镜像； </li>
+<li>以 <a href="https://store.docker.com/images/nginx" target="_blank" rel="noopener">Nginx</a> 为基础镜像；</li>
 <li>复制 nginx 配置文件（etc 下的 nginx.conf ）到相应目录替换原本镜像的配置</li>
 <li>复制已经打包好的前端网页代码到镜像</li>
 <li>启动 nginx</li>
@@ -187,7 +187,7 @@
 <li>server 下的 <code>Dockerfile</code>（Node API 服务）<ol>
 <li>以 Nodejs 为基础镜像；</li>
 <li>复制 <code>package.json</code> ，并安装相应 npm 包</li>
-<li>复制源码 </li>
+<li>复制源码</li>
 <li>启动 Node 服务</li>
 </ol>
 </li>
@@ -200,8 +200,8 @@
 <li><a href="https://docs.docker.com/compose/" target="_blank" rel="noopener">Docker Compose</a>：Compose 也是很常用的一个工具！</li>
 <li>使用任何一个镜像时的介绍，通常会阐明基本用法和一些最佳实践，比如 <a href="https://store.docker.com/images/nginx" target="_blank" rel="noopener">nginx</a></li>
 <li>各种常见镜像的一些最佳实践</li>
-<li>Node.js:  <a href="https://github.com/nodejs/docker-node/blob/master/docs/BestPractices.md" target="_blank" rel="noopener">Docker and Node.js Best Practices</a> </li>
-<li>Nginx <ul>
+<li>Node.js:  <a href="https://github.com/nodejs/docker-node/blob/master/docs/BestPractices.md" target="_blank" rel="noopener">Docker and Node.js Best Practices</a></li>
+<li>Nginx<ul>
 <li><a href="https://auth0.com/blog/load-balancing-nodejs-applications-with-nginx-and-docker/" target="_blank" rel="noopener">Load Balancing Node.js Applications with NGINX and Docker</a>: 非常好的介绍了如何用 Docker 和 Nginx 来做 Nodejs 应用的负载均衡，涉及到 Docker 的简单介绍和安装 以及具体的操作。文末还列出了几个非常好的相关资料</li>
 <li><a href="https://blog.docker.com/2015/04/tips-for-deploying-nginx-official-image-with-docker/" target="_blank" rel="noopener">Tips for Deploying NginxOffical Image with Docker</a></li>
 </ul>
@@ -213,7 +213,13 @@
 </ul>
 <h2 id="资源"><a href="#资源" class="headerlink" title="资源"></a>资源</h2><ul>
 <li><a href="https://store.docker.com/" target="_blank" rel="noopener">docker store</a>：<strong>Docker 官方的镜像仓库</strong>，替代了以前的 Docker Hub.</li>
-<li><a href="https://www.daocloud.io/mirror#accelerator-doc" target="_blank" rel="noopener">国内最好用的 Docker 加速器 - DaoCloud</a>：<strong>国内一定要配置加速器</strong>（ DaoCloud 的介绍： <em>使用 Docker 的时候，需要经常从官方获取镜像，但是由于显而易见的网络原因，拉取镜像的过程非常耗时，严重影响使用 Docker 的体验。因此 DaoCloud 推出了加速器工具解决这个难题，通过智能路由和缓存机制，极大提升了国内网络访问 Docker Hub 的速度，目前已经拥有了广泛的用户群体，并得到了 Docker 官方的大力推荐。如果您是在国内的网络环境使用 Docker，那么 Docker 加速器一定能帮助到您。</em> ）</li>
+<li><p><a href="https://www.daocloud.io/mirror#accelerator-doc" target="_blank" rel="noopener">国内最好用的 Docker 加速器 - DaoCloud</a>：<strong>国内一定要配置加速器</strong>（ DaoCloud 的介绍： <em>使用 Docker 的时候，需要经常从官方获取镜像，但是由于显而易见的网络原因，拉取镜像的过程非常耗时，严重影响使用 Docker 的体验。因此 DaoCloud 推出了加速器工具解决这个难题，通过智能路由和缓存机制，极大提升了国内网络访问 Docker Hub 的速度，目前已经拥有了广泛的用户群体，并得到了 Docker 官方的大力推荐。如果您是在国内的网络环境使用 Docker，那么 Docker 加速器一定能帮助到您。</em> ）</p>
+<ul>
+<li><p>Mac 配置方法（Docker desktop community v2.2.05(43884)）: Preference -&gt; Docker Engine(修改配置，新增如下内容)</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">&#123;</span><br><span class="line"></span><br><span class="line">  &quot;registry-mirrors&quot;: [</span><br><span class="line"></span><br><span class="line">    &quot;https://docker.mirrors.ustc.edu.cn&quot;,</span><br><span class="line"></span><br><span class="line">    &quot;https://hub-mirror.c.163.com&quot;,</span><br><span class="line"></span><br><span class="line">    &quot;http://f1361db2.m.daocloud.io&quot;</span><br><span class="line">  ]</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
 </ul>
 
             </div>
