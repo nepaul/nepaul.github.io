@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!--Description-->
+    
+        <meta name="description" content="现代的个人博客应该是怎么样的？
+良好快速的书写体验 - 支持 Markdown
+随时都能编辑 - 不需要下载特定的编辑器，只要有一个浏览器
+无成本发布 - 就像常见的博客平台支持一键发布
+阅读体验良好 - 漂亮的，并且支持移动端
+One more thing, it’s FREE
+
+简单几步就可以满">
+    
+
+    <!--Author-->
+    
+        <meta name="author" content="nepaul">
+    
+
+    <!--Open Graph Title-->
+    
+        <meta property="og:title" content="Hexo + GitHub Action + Github Codespaces = A Free Modern Blog"/>
+    
+
+    <!--Open Graph Site Name-->
+    <meta property="og:site_name" content="DesignBytes"/>
+
+    <!--Page Cover-->
+    
+        <meta property="og:image" content=""/>
+    
+
+    
+        <link rel="icon" href="favicon/favicon.ico">
+    
+    <!-- Title -->
+    
+    <title>Hexo + GitHub Action + Github Codespaces = A Free Modern Blog - DesignBytes</title>
+
+    <!-- Bootstrap Core CSS -->
+    <!-- 
+<link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css">
+ -->
+    <link href="//lib.baomitu.com/twitter-bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+
+    <!-- Custom Fonts -->
+    <link href="//lib.baomitu.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <style>
+        @font-face{font-family:Lora;font-style:normal;font-weight:regular;src:url(//lib.baomitu.com/fonts/lora/lora-regular.eot);src:local('Lora'),local('Lora-Normal'),url(//lib.baomitu.com/fonts/lora/lora-regular.eot?#iefix) format('embedded-opentype'),url(//lib.baomitu.com/fonts/lora/lora-regular.woff2) format('woff2'),url(//lib.baomitu.com/fonts/lora/lora-regular.woff) format('woff'),url(//lib.baomitu.com/fonts/lora/lora-regular.ttf) format('truetype'),url(//lib.baomitu.com/fonts/lora/lora-regular.svg#Lora) format('svg')}@font-face{font-family:Lora;font-style:normal;font-weight:700;src:url(//lib.baomitu.com/fonts/lora/lora-700.eot);src:local('Lora'),local('Lora-Normal'),url(//lib.baomitu.com/fonts/lora/lora-700.eot?#iefix) format('embedded-opentype'),url(//lib.baomitu.com/fonts/lora/lora-700.woff2) format('woff2'),url(//lib.baomitu.com/fonts/lora/lora-700.woff) format('woff'),url(//lib.baomitu.com/fonts/lora/lora-700.ttf) format('truetype'),url(//lib.baomitu.com/fonts/lora/lora-700.svg#Lora) format('svg')}@font-face{font-family:Lora;font-style:italic;font-weight:regular;src:url(//lib.baomitu.com/fonts/lora/lora-italic.eot);src:local('Lora'),local('Lora-Italic'),url(//lib.baomitu.com/fonts/lora/lora-italic.eot?#iefix) format('embedded-opentype'),url(//lib.baomitu.com/fonts/lora/lora-italic.woff2) format('woff2'),url(//lib.baomitu.com/fonts/lora/lora-italic.woff) format('woff'),url(//lib.baomitu.com/fonts/lora/lora-italic.ttf) format('truetype'),url(//lib.baomitu.com/fonts/lora/lora-italic.svg#Lora) format('svg')}@font-face{font-family:Lora;font-style:italic;font-weight:700;src:url(//lib.baomitu.com/fonts/lora/lora-700italic.eot);src:local('Lora'),local('Lora-Italic'),url(//lib.baomitu.com/fonts/lora/lora-700italic.eot?#iefix) format('embedded-opentype'),url(//lib.baomitu.com/fonts/lora/lora-700italic.woff2) format('woff2'),url(//lib.baomitu.com/fonts/lora/lora-700italic.woff) format('woff'),url(//lib.baomitu.com/fonts/lora/lora-700italic.ttf) format('truetype'),url(//lib.baomitu.com/fonts/lora/lora-700italic.svg#Lora) format('svg')}@font-face{font-family:'Open Sans';font-style:italic;font-weight:300;src:url(//lib.baomitu.com/fonts/open-sans/open-sans-300italic.eot);src:local('Open Sans'),local('OpenSans-Italic'),url(//lib.baomitu.com/fonts/open-sans/open-sans-300italic.eot?#iefix) format('embedded-opentype'),url(//lib.baomitu.com/fonts/open-sans/open-sans-300italic.woff2) format('woff2'),url(//lib.baomitu.com/fonts/open-sans/open-sans-300italic.woff) format('woff'),url(//lib.baomitu.com/fonts/open-sans/open-sans-300italic.ttf) format('truetype'),url(//lib.baomitu.com/fonts/open-sans/open-sans-300italic.svg#OpenSans) format('svg')}@font-face{font-family:'Open Sans';font-style:italic;font-weight:regular;src:url(//lib.baomitu.com/fonts/open-sans/open-sans-italic.eot);src:local('Open Sans'),local('OpenSans-Italic'),url(//lib.baomitu.com/fonts/open-sans/open-sans-italic.eot?#iefix) format('embedded-opentype'),url(//lib.baomitu.com/fonts/open-sans/open-sans-italic.woff2) format('woff2'),url(//lib.baomitu.com/fonts/open-sans/open-sans-italic.woff) format('woff'),url(//lib.baomitu.com/fonts/open-sans/open-sans-italic.ttf) format('truetype'),url(//lib.baomitu.com/fonts/open-sans/open-sans-italic.svg#OpenSans) format('svg')}@font-face{font-family:'Open Sans';font-style:italic;font-weight:600;src:url(//lib.baomitu.com/fonts/open-sans/open-sans-600italic.eot);src:local('Open Sans'),local('OpenSans-Italic'),url(//lib.baomitu.com/fonts/open-sans/open-sans-600italic.eot?#iefix) format('embedded-opentype'),url(//lib.baomitu.com/fonts/open-sans/open-sans-600italic.woff2) format('woff2'),url(//lib.baomitu.com/fonts/open-sans/open-sans-600italic.woff) format('woff'),url(//lib.baomitu.com/fonts/open-sans/open-sans-600italic.ttf) format('truetype'),url(//lib.baomitu.com/fonts/open-sans/open-sans-600italic.svg#OpenSans) format('svg')}@font-face{font-family:'Open Sans';font-style:italic;font-weight:700;src:url(//lib.baomitu.com/fonts/open-sans/open-sans-700italic.eot);src:local('Open Sans'),local('OpenSans-Italic'),url(//lib.baomitu.com/fonts/open-sans/open-sans-700italic.eot?#iefix) format('embedded-opentype'),url(//lib.baomitu.com/fonts/open-sans/open-sans-700italic.woff2) format('woff2'),url(//lib.baomitu.com/fonts/open-sans/open-sans-700italic.woff) format('woff'),url(//lib.baomitu.com/fonts/open-sans/open-sans-700italic.ttf) format('truetype'),url(//lib.baomitu.com/fonts/open-sans/open-sans-700italic.svg#OpenSans) format('svg')}@font-face{font-family:'Open Sans';font-style:italic;font-weight:800;src:url(//lib.baomitu.com/fonts/open-sans/open-sans-800italic.eot);src:local('Open Sans'),local('OpenSans-Italic'),url(//lib.baomitu.com/fonts/open-sans/open-sans-800italic.eot?#iefix) format('embedded-opentype'),url(//lib.baomitu.com/fonts/open-sans/open-sans-800italic.woff2) format('woff2'),url(//lib.baomitu.com/fonts/open-sans/open-sans-800italic.woff) format('woff'),url(//lib.baomitu.com/fonts/open-sans/open-sans-800italic.ttf) format('truetype'),url(//lib.baomitu.com/fonts/open-sans/open-sans-800italic.svg#OpenSans) format('svg')}@font-face{font-family:'Open Sans';font-style:normal;font-weight:regular;src:url(//lib.baomitu.com/fonts/open-sans/open-sans-regular.eot);src:local('Open Sans'),local('OpenSans-Normal'),url(//lib.baomitu.com/fonts/open-sans/open-sans-regular.eot?#iefix) format('embedded-opentype'),url(//lib.baomitu.com/fonts/open-sans/open-sans-regular.woff2) format('woff2'),url(//lib.baomitu.com/fonts/open-sans/open-sans-regular.woff) format('woff'),url(//lib.baomitu.com/fonts/open-sans/open-sans-regular.ttf) format('truetype'),url(//lib.baomitu.com/fonts/open-sans/open-sans-regular.svg#OpenSans) format('svg')}@font-face{font-family:'Open Sans';font-style:normal;font-weight:300;src:url(//lib.baomitu.com/fonts/open-sans/open-sans-300.eot);src:local('Open Sans'),local('OpenSans-Normal'),url(//lib.baomitu.com/fonts/open-sans/open-sans-300.eot?#iefix) format('embedded-opentype'),url(//lib.baomitu.com/fonts/open-sans/open-sans-300.woff2) format('woff2'),url(//lib.baomitu.com/fonts/open-sans/open-sans-300.woff) format('woff'),url(//lib.baomitu.com/fonts/open-sans/open-sans-300.ttf) format('truetype'),url(//lib.baomitu.com/fonts/open-sans/open-sans-300.svg#OpenSans) format('svg')}@font-face{font-family:'Open Sans';font-style:normal;font-weight:600;src:url(//lib.baomitu.com/fonts/open-sans/open-sans-600.eot);src:local('Open Sans'),local('OpenSans-Normal'),url(//lib.baomitu.com/fonts/open-sans/open-sans-600.eot?#iefix) format('embedded-opentype'),url(//lib.baomitu.com/fonts/open-sans/open-sans-600.woff2) format('woff2'),url(//lib.baomitu.com/fonts/open-sans/open-sans-600.woff) format('woff'),url(//lib.baomitu.com/fonts/open-sans/open-sans-600.ttf) format('truetype'),url(//lib.baomitu.com/fonts/open-sans/open-sans-600.svg#OpenSans) format('svg')}@font-face{font-family:'Open Sans';font-style:normal;font-weight:700;src:url(//lib.baomitu.com/fonts/open-sans/open-sans-700.eot);src:local('Open Sans'),local('OpenSans-Normal'),url(//lib.baomitu.com/fonts/open-sans/open-sans-700.eot?#iefix) format('embedded-opentype'),url(//lib.baomitu.com/fonts/open-sans/open-sans-700.woff2) format('woff2'),url(//lib.baomitu.com/fonts/open-sans/open-sans-700.woff) format('woff'),url(//lib.baomitu.com/fonts/open-sans/open-sans-700.ttf) format('truetype'),url(//lib.baomitu.com/fonts/open-sans/open-sans-700.svg#OpenSans) format('svg')}@font-face{font-family:'Open Sans';font-style:normal;font-weight:800;src:url(//lib.baomitu.com/fonts/open-sans/open-sans-800.eot);src:local('Open Sans'),local('OpenSans-Normal'),url(//lib.baomitu.com/fonts/open-sans/open-sans-800.eot?#iefix) format('embedded-opentype'),url(//lib.baomitu.com/fonts/open-sans/open-sans-800.woff2) format('woff2'),url(//lib.baomitu.com/fonts/open-sans/open-sans-800.woff) format('woff'),url(//lib.baomitu.com/fonts/open-sans/open-sans-800.ttf) format('truetype'),url(//lib.baomitu.com/fonts/open-sans/open-sans-800.svg#OpenSans) format('svg')}
+    </style>
+    <!-- <link href="//fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" rel="stylesheet" type="text/css"> -->
+    <!-- <link href="//fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css"> -->
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- Gallery -->
+    <!-- <link href="//cdn.rawgit.com/noelboss/featherlight/1.3.5/release/featherlight.min.css" type="text/css" rel="stylesheet" /> -->
+    <link href="//lib.baomitu.com/featherlight/1.3.5/featherlight.min.css" rel="stylesheet">
+
+    <!-- Google Analytics -->
+    
+    <script>
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+                    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+                m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+        ga('create', 'UA-63590316-1', 'auto');
+        ga('send', 'pageview');
+
+    </script>
+
+
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+
+    <!-- Menu -->
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">DesignBytes</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav navbar-right">
+                
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+                
+                    <li>
+                        <a href="/archives">Archives</a>
+                    </li>
+                
+            </ul>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+
+    <!-- Main Content -->
+    <!-- Page Header -->
+<!-- Set your background image for this header in your post front-matter: cover -->
+
+<header class="intro-header" style="background-image: url('https://images.unsplash.com/photo-1452716726610-30ed68426a6b?ixlib=rb-0.3.5&q=80&fm=jpg&crop=entropy&s=eb13d4961a078aca65cfa493a8026519')">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <h1>Hexo + GitHub Action + Github Codespaces = A Free Modern Blog</h1>
+                    
+                    <span class="meta">
+                        <!-- Date and Author -->
+                        
+                            Posted by nepaul on
+                        
+                        2022-12-15
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+            <!-- Tags and categories -->
+           
+                <div class="col-lg-4 col-lg-offset-2 col-md-5 col-md-offset-1 post-tags">
+                    
+                        
+
+
+<a href="/tags/Tools/">#Tools</a>
+
+
+                    
+                </div>
+                <div class="col-lg-4 col-md-5 post-categories">
+                    
+                </div>
+            
+
+            <!-- Gallery -->
+            
+
+            <!-- Post Main Content -->
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <h2 id="现代的个人博客应该是怎么样的？"><a href="#现代的个人博客应该是怎么样的？" class="headerlink" title="现代的个人博客应该是怎么样的？"></a>现代的个人博客应该是怎么样的？</h2><ul>
+<li>良好快速的书写体验 - 支持 Markdown</li>
+<li>随时都能编辑 - 不需要下载特定的编辑器，只要有一个浏览器</li>
+<li>无成本发布 - 就像常见的博客平台支持一键发布</li>
+<li>阅读体验良好 - 漂亮的，并且支持移动端</li>
+<li>One more thing, it’s FREE</li>
+</ul>
+<h2 id="简单几步就可以满足以上诉求"><a href="#简单几步就可以满足以上诉求" class="headerlink" title="简单几步就可以满足以上诉求"></a>简单几步就可以满足以上诉求</h2><ol start="0">
+<li><p>假设您已经有一个 <a target="_blank" rel="noopener" href="https://hexo.io/">Hexo(A fast, simple &amp; powerful blog framework)</a> 项目（下文以 “hexo-blog” 来说明），并且已经用 GitHub Pages 来托管</p>
+</li>
+<li><p>新建一个 GitHub 项目用来托管 hexo-blog 项目的源代码；</p>
+</li>
+<li><p>在 hexo-blog 项目根目录新建文件 <code>.github/workflows/deploy.yml</code>，并添加如下内容</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">name: deploy</span><br><span class="line"></span><br><span class="line">on: </span><br><span class="line">  push:</span><br><span class="line">    branches:</span><br><span class="line">      - master</span><br><span class="line"></span><br><span class="line">jobs:</span><br><span class="line">  deploy:</span><br><span class="line">    runs-on: ubuntu-latest</span><br><span class="line">    steps:</span><br><span class="line">      - uses: actions/checkout@v3</span><br><span class="line">      - run: git config --global user.email &quot;YOUR EMAIL&quot;</span><br><span class="line">      - run: git config --global user.name &quot;YOUR NAME&quot;</span><br><span class="line">      - uses: webfactory/ssh-agent@v0.7.0</span><br><span class="line">        with:</span><br><span class="line">          ssh-private-key: $&#123;&#123; secrets.DEPLOY_KEY &#125;&#125;</span><br><span class="line">      - uses: actions/setup-node@v3</span><br><span class="line">        with:</span><br><span class="line">          node-version: 18</span><br><span class="line">          cache: &#x27;npm&#x27;</span><br><span class="line">      - run: npm install</span><br><span class="line">      - run: npm run clean</span><br><span class="line">      - run: npm run generate</span><br><span class="line">      - run: npm run deploy</span><br><span class="line"></span><br></pre></td></tr></table></figure></li>
+<li><p>在 GitHub hexo-blog 项目的 Actions secrets(<code>/settings/secrets/actions</code>) 里新增一个名为 <code>DEPLOY_KEY</code> 的 secret.</p>
+<p>内容为您配置访问 GitHub 的 SSH Key 的私钥（比如 <code>~/.ssh/id_ed25519.pub</code>）</p>
+</li>
+</ol>
+<p>至此，所有配置完毕。</p>
+<h2 id="如何使用？"><a href="#如何使用？" class="headerlink" title="如何使用？"></a>如何使用？</h2><ol>
+<li>浏览器打开 GitHub hexo-blog 这个项目；</li>
+<li>点击 Code -&gt; Codespaces 启用浏览器编辑器编辑；</li>
+<li>新建并书写一篇文章（使用体验跟用本地环境书写一致）；</li>
+<li>提交代码并推送到远程仓库（此时 GitHub Action 就自动开始执行发布流程，一般需要等待两分钟左右就能看到最新的文章了）；</li>
+</ol>
+<p>一篇文章就发布成功了（本篇就是这么发成功的🤣）！</p>
+<p><strong>BTW: 类似 Codespaces 等在线编辑器应该是未来开发团队提升效能的一个利器，是非常值得尝试的。</strong></p>
+
+            </div>
+
+            <!-- Comments -->
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                
+    <hr />
+    <h3>Comments:</h3>
+    <div id="disqus_thread">
+        <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    </div>
+
+
+
+            </div>
+        </div>
+    </div>
+</article>
+
+    <!-- Footer -->
+    <hr />
+
+<!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                    <li>
+                        <a href="https://github.com/nepaul" target="_blank">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                    <!-- <li>
+                        <a href="https://twitter.com/xsnepaul" target="_blank">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://medium.com/@nepaul" target="_blank">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-medium fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li> -->
+                </ul>
+                <p class="copyright text-muted">      &copy; 2023 nepaul&nbsp;
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>, theme by <a target="_blank" rel="noopener" href="https://github.com/klugjo/hexo-theme-clean-blog">Clean Blog</a></p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+
+    <!-- After footer scripts -->
+    
+<!-- jQuery -->
+<!-- 
+<script src="/js/jquery.min.js"></script>
+ -->
+<script src="//lib.baomitu.com/jquery/2.2.4/jquery.min.js"></script>
+
+<!-- Bootstrap -->
+<!-- 
+<script src="/bootstrap/js/bootstrap.min.js"></script>
+ -->
+<script src="//lib.baomitu.com/twitter-bootstrap/3.3.6/js/bootstrap.min.js"></script>
+
+<!-- Gallery -->
+<!-- <script src="//cdn.rawgit.com/noelboss/featherlight/1.3.5/release/featherlight.min.js" type="text/javascript" charset="utf-8"></script> -->
+<script src="//lib.baomitu.com/featherlight/1.3.5/featherlight.min.js"></script>
+
+<!-- Disqus Comments -->
+
+<script type="text/javascript">
+    var disqus_shortname = '';
+
+    (function(){
+        var dsq = document.createElement('script');
+        dsq.type = 'text/javascript';
+        dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+</body>
+
+</html>

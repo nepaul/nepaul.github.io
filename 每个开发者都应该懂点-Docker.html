@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!--Description-->
+    
+        <meta name="description" content="背景大大小小经历了几个项目后，有一个共同的痛点就是开发完成后测试或上线部署很麻烦。比如有个小项目主要包括几个服务：1. Node.js 后台 API 服务；  2. MongoDB； 3. Nginx 反向代理静态资源和后台 API 服务，并且后续可能还会加入 Redis 做缓存。而且很多时候同一套">
+    
+
+    <!--Author-->
+    
+        <meta name="author" content="nepaul">
+    
+
+    <!--Open Graph Title-->
+    
+        <meta property="og:title" content="每个开发者都应该懂点 Docker"/>
+    
+
+    <!--Open Graph Site Name-->
+    <meta property="og:site_name" content="DesignBytes"/>
+
+    <!--Page Cover-->
+    
+        <meta property="og:image" content=""/>
+    
+
+    
+        <link rel="icon" href="favicon/favicon.ico">
+    
+    <!-- Title -->
+    
+    <title>每个开发者都应该懂点 Docker - DesignBytes</title>
+
+    <!-- Bootstrap Core CSS -->
+    <!-- 
+<link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css">
+ -->
+    <link href="//lib.baomitu.com/twitter-bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+
+    <!-- Custom Fonts -->
+    <link href="//lib.baomitu.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <style>
+        @font-face{font-family:Lora;font-style:normal;font-weight:regular;src:url(//lib.baomitu.com/fonts/lora/lora-regular.eot);src:local('Lora'),local('Lora-Normal'),url(//lib.baomitu.com/fonts/lora/lora-regular.eot?#iefix) format('embedded-opentype'),url(//lib.baomitu.com/fonts/lora/lora-regular.woff2) format('woff2'),url(//lib.baomitu.com/fonts/lora/lora-regular.woff) format('woff'),url(//lib.baomitu.com/fonts/lora/lora-regular.ttf) format('truetype'),url(//lib.baomitu.com/fonts/lora/lora-regular.svg#Lora) format('svg')}@font-face{font-family:Lora;font-style:normal;font-weight:700;src:url(//lib.baomitu.com/fonts/lora/lora-700.eot);src:local('Lora'),local('Lora-Normal'),url(//lib.baomitu.com/fonts/lora/lora-700.eot?#iefix) format('embedded-opentype'),url(//lib.baomitu.com/fonts/lora/lora-700.woff2) format('woff2'),url(//lib.baomitu.com/fonts/lora/lora-700.woff) format('woff'),url(//lib.baomitu.com/fonts/lora/lora-700.ttf) format('truetype'),url(//lib.baomitu.com/fonts/lora/lora-700.svg#Lora) format('svg')}@font-face{font-family:Lora;font-style:italic;font-weight:regular;src:url(//lib.baomitu.com/fonts/lora/lora-italic.eot);src:local('Lora'),local('Lora-Italic'),url(//lib.baomitu.com/fonts/lora/lora-italic.eot?#iefix) format('embedded-opentype'),url(//lib.baomitu.com/fonts/lora/lora-italic.woff2) format('woff2'),url(//lib.baomitu.com/fonts/lora/lora-italic.woff) format('woff'),url(//lib.baomitu.com/fonts/lora/lora-italic.ttf) format('truetype'),url(//lib.baomitu.com/fonts/lora/lora-italic.svg#Lora) format('svg')}@font-face{font-family:Lora;font-style:italic;font-weight:700;src:url(//lib.baomitu.com/fonts/lora/lora-700italic.eot);src:local('Lora'),local('Lora-Italic'),url(//lib.baomitu.com/fonts/lora/lora-700italic.eot?#iefix) format('embedded-opentype'),url(//lib.baomitu.com/fonts/lora/lora-700italic.woff2) format('woff2'),url(//lib.baomitu.com/fonts/lora/lora-700italic.woff) format('woff'),url(//lib.baomitu.com/fonts/lora/lora-700italic.ttf) format('truetype'),url(//lib.baomitu.com/fonts/lora/lora-700italic.svg#Lora) format('svg')}@font-face{font-family:'Open Sans';font-style:italic;font-weight:300;src:url(//lib.baomitu.com/fonts/open-sans/open-sans-300italic.eot);src:local('Open Sans'),local('OpenSans-Italic'),url(//lib.baomitu.com/fonts/open-sans/open-sans-300italic.eot?#iefix) format('embedded-opentype'),url(//lib.baomitu.com/fonts/open-sans/open-sans-300italic.woff2) format('woff2'),url(//lib.baomitu.com/fonts/open-sans/open-sans-300italic.woff) format('woff'),url(//lib.baomitu.com/fonts/open-sans/open-sans-300italic.ttf) format('truetype'),url(//lib.baomitu.com/fonts/open-sans/open-sans-300italic.svg#OpenSans) format('svg')}@font-face{font-family:'Open Sans';font-style:italic;font-weight:regular;src:url(//lib.baomitu.com/fonts/open-sans/open-sans-italic.eot);src:local('Open Sans'),local('OpenSans-Italic'),url(//lib.baomitu.com/fonts/open-sans/open-sans-italic.eot?#iefix) format('embedded-opentype'),url(//lib.baomitu.com/fonts/open-sans/open-sans-italic.woff2) format('woff2'),url(//lib.baomitu.com/fonts/open-sans/open-sans-italic.woff) format('woff'),url(//lib.baomitu.com/fonts/open-sans/open-sans-italic.ttf) format('truetype'),url(//lib.baomitu.com/fonts/open-sans/open-sans-italic.svg#OpenSans) format('svg')}@font-face{font-family:'Open Sans';font-style:italic;font-weight:600;src:url(//lib.baomitu.com/fonts/open-sans/open-sans-600italic.eot);src:local('Open Sans'),local('OpenSans-Italic'),url(//lib.baomitu.com/fonts/open-sans/open-sans-600italic.eot?#iefix) format('embedded-opentype'),url(//lib.baomitu.com/fonts/open-sans/open-sans-600italic.woff2) format('woff2'),url(//lib.baomitu.com/fonts/open-sans/open-sans-600italic.woff) format('woff'),url(//lib.baomitu.com/fonts/open-sans/open-sans-600italic.ttf) format('truetype'),url(//lib.baomitu.com/fonts/open-sans/open-sans-600italic.svg#OpenSans) format('svg')}@font-face{font-family:'Open Sans';font-style:italic;font-weight:700;src:url(//lib.baomitu.com/fonts/open-sans/open-sans-700italic.eot);src:local('Open Sans'),local('OpenSans-Italic'),url(//lib.baomitu.com/fonts/open-sans/open-sans-700italic.eot?#iefix) format('embedded-opentype'),url(//lib.baomitu.com/fonts/open-sans/open-sans-700italic.woff2) format('woff2'),url(//lib.baomitu.com/fonts/open-sans/open-sans-700italic.woff) format('woff'),url(//lib.baomitu.com/fonts/open-sans/open-sans-700italic.ttf) format('truetype'),url(//lib.baomitu.com/fonts/open-sans/open-sans-700italic.svg#OpenSans) format('svg')}@font-face{font-family:'Open Sans';font-style:italic;font-weight:800;src:url(//lib.baomitu.com/fonts/open-sans/open-sans-800italic.eot);src:local('Open Sans'),local('OpenSans-Italic'),url(//lib.baomitu.com/fonts/open-sans/open-sans-800italic.eot?#iefix) format('embedded-opentype'),url(//lib.baomitu.com/fonts/open-sans/open-sans-800italic.woff2) format('woff2'),url(//lib.baomitu.com/fonts/open-sans/open-sans-800italic.woff) format('woff'),url(//lib.baomitu.com/fonts/open-sans/open-sans-800italic.ttf) format('truetype'),url(//lib.baomitu.com/fonts/open-sans/open-sans-800italic.svg#OpenSans) format('svg')}@font-face{font-family:'Open Sans';font-style:normal;font-weight:regular;src:url(//lib.baomitu.com/fonts/open-sans/open-sans-regular.eot);src:local('Open Sans'),local('OpenSans-Normal'),url(//lib.baomitu.com/fonts/open-sans/open-sans-regular.eot?#iefix) format('embedded-opentype'),url(//lib.baomitu.com/fonts/open-sans/open-sans-regular.woff2) format('woff2'),url(//lib.baomitu.com/fonts/open-sans/open-sans-regular.woff) format('woff'),url(//lib.baomitu.com/fonts/open-sans/open-sans-regular.ttf) format('truetype'),url(//lib.baomitu.com/fonts/open-sans/open-sans-regular.svg#OpenSans) format('svg')}@font-face{font-family:'Open Sans';font-style:normal;font-weight:300;src:url(//lib.baomitu.com/fonts/open-sans/open-sans-300.eot);src:local('Open Sans'),local('OpenSans-Normal'),url(//lib.baomitu.com/fonts/open-sans/open-sans-300.eot?#iefix) format('embedded-opentype'),url(//lib.baomitu.com/fonts/open-sans/open-sans-300.woff2) format('woff2'),url(//lib.baomitu.com/fonts/open-sans/open-sans-300.woff) format('woff'),url(//lib.baomitu.com/fonts/open-sans/open-sans-300.ttf) format('truetype'),url(//lib.baomitu.com/fonts/open-sans/open-sans-300.svg#OpenSans) format('svg')}@font-face{font-family:'Open Sans';font-style:normal;font-weight:600;src:url(//lib.baomitu.com/fonts/open-sans/open-sans-600.eot);src:local('Open Sans'),local('OpenSans-Normal'),url(//lib.baomitu.com/fonts/open-sans/open-sans-600.eot?#iefix) format('embedded-opentype'),url(//lib.baomitu.com/fonts/open-sans/open-sans-600.woff2) format('woff2'),url(//lib.baomitu.com/fonts/open-sans/open-sans-600.woff) format('woff'),url(//lib.baomitu.com/fonts/open-sans/open-sans-600.ttf) format('truetype'),url(//lib.baomitu.com/fonts/open-sans/open-sans-600.svg#OpenSans) format('svg')}@font-face{font-family:'Open Sans';font-style:normal;font-weight:700;src:url(//lib.baomitu.com/fonts/open-sans/open-sans-700.eot);src:local('Open Sans'),local('OpenSans-Normal'),url(//lib.baomitu.com/fonts/open-sans/open-sans-700.eot?#iefix) format('embedded-opentype'),url(//lib.baomitu.com/fonts/open-sans/open-sans-700.woff2) format('woff2'),url(//lib.baomitu.com/fonts/open-sans/open-sans-700.woff) format('woff'),url(//lib.baomitu.com/fonts/open-sans/open-sans-700.ttf) format('truetype'),url(//lib.baomitu.com/fonts/open-sans/open-sans-700.svg#OpenSans) format('svg')}@font-face{font-family:'Open Sans';font-style:normal;font-weight:800;src:url(//lib.baomitu.com/fonts/open-sans/open-sans-800.eot);src:local('Open Sans'),local('OpenSans-Normal'),url(//lib.baomitu.com/fonts/open-sans/open-sans-800.eot?#iefix) format('embedded-opentype'),url(//lib.baomitu.com/fonts/open-sans/open-sans-800.woff2) format('woff2'),url(//lib.baomitu.com/fonts/open-sans/open-sans-800.woff) format('woff'),url(//lib.baomitu.com/fonts/open-sans/open-sans-800.ttf) format('truetype'),url(//lib.baomitu.com/fonts/open-sans/open-sans-800.svg#OpenSans) format('svg')}
+    </style>
+    <!-- <link href="//fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" rel="stylesheet" type="text/css"> -->
+    <!-- <link href="//fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css"> -->
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- Gallery -->
+    <!-- <link href="//cdn.rawgit.com/noelboss/featherlight/1.3.5/release/featherlight.min.css" type="text/css" rel="stylesheet" /> -->
+    <link href="//lib.baomitu.com/featherlight/1.3.5/featherlight.min.css" rel="stylesheet">
+
+    <!-- Google Analytics -->
+    
+    <script>
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+                    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+                m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+        ga('create', 'UA-63590316-1', 'auto');
+        ga('send', 'pageview');
+
+    </script>
+
+
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+
+    <!-- Menu -->
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">DesignBytes</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav navbar-right">
+                
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+                
+                    <li>
+                        <a href="/archives">Archives</a>
+                    </li>
+                
+            </ul>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+
+    <!-- Main Content -->
+    <!-- Page Header -->
+<!-- Set your background image for this header in your post front-matter: cover -->
+
+<header class="intro-header" style="background-image: url('https://images.unsplash.com/photo-1452716726610-30ed68426a6b?ixlib=rb-0.3.5&q=80&fm=jpg&crop=entropy&s=eb13d4961a078aca65cfa493a8026519')">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <h1>每个开发者都应该懂点 Docker</h1>
+                    
+                    <span class="meta">
+                        <!-- Date and Author -->
+                        
+                            Posted by nepaul on
+                        
+                        2017-08-02
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+            <!-- Tags and categories -->
+           
+                <div class="col-lg-4 col-lg-offset-2 col-md-5 col-md-offset-1 post-tags">
+                    
+                        
+
+
+<a href="/tags/tool/">#tool</a>
+
+
+                    
+                </div>
+                <div class="col-lg-4 col-md-5 post-categories">
+                    
+                </div>
+            
+
+            <!-- Gallery -->
+            
+
+            <!-- Post Main Content -->
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>大大小小经历了几个项目后，有一个共同的痛点就是开发完成后测试或上线部署很麻烦。比如有个小项目主要包括几个服务：1. Node.js 后台 API 服务；  2. MongoDB； 3. Nginx 反向代理静态资源和后台 API 服务，并且后续可能还会加入 Redis 做缓存。而且很多时候同一套系统，部署不下三次。</p>
+<p>其实解决方案很早就出现了，那便是大名鼎鼎的 <a target="_blank" rel="noopener" href="https://www.docker.com/">Docker</a>！</p>
+<p>:exclamation: 这里有一篇很好的<strong>科普文（<a target="_blank" rel="noopener" href="https://dzone.com/articles/docker-for-devs-containerizing-your-application">Docker for Devs: Containerizing Your Application</a>，<a target="_blank" rel="noopener" href="http://dockone.io/article/2239">相应的中文</a>），小白必读</strong>！补充提示：初次安装 Docker 时，国内用户一定要配置加速器（比如文末 <strong>资源</strong> 部分介绍的 DaoCloud 加速器）</p>
+<h2 id="利用-Docker-和-Docker-Compose-解放生产力"><a href="#利用-Docker-和-Docker-Compose-解放生产力" class="headerlink" title="利用 Docker 和 Docker-Compose 解放生产力"></a>利用 Docker 和 Docker-Compose 解放生产力</h2><blockquote>
+<p>通过一个小项目感受一下 Docker 的魅力。<br>主要有三个服务：1. MongoDB ；2. Node API 服务；3. Nginx 反向代理静态资源和 API 服务。<br>Node API 服务 和 Nginx 服务需要一个 Dockerfile，整个项目由 Docker-Compose 去管理。  </p>
+</blockquote>
+<ul>
+<li>项目目录<br>├── client<br>│   ├── Dockerfile<br>│   ├── .dockerignore<br>│   ├── dist<br>│   ├── etc<br>│   │   └── nginx.conf<br>├── server<br>│   ├── Dockerfile<br>│   ├── .dockerignore<br>│   ├── source-dir<br>├── docker-compose.yml</li>
+<li>主要目的阐述</li>
+<li>client 下的 <code>Dockerfile</code>（Nginx 反向代理静态资源和 API 服务）<ol>
+<li>以 <a target="_blank" rel="noopener" href="https://store.docker.com/images/nginx">Nginx</a> 为基础镜像；</li>
+<li>复制 nginx 配置文件（etc 下的 nginx.conf ）到相应目录替换原本镜像的配置</li>
+<li>复制已经打包好的前端网页代码到镜像</li>
+<li>启动 nginx</li>
+</ol>
+</li>
+<li>server 下的 <code>Dockerfile</code>（Node API 服务）<ol>
+<li>以 Nodejs 为基础镜像；</li>
+<li>复制 <code>package.json</code> ，并安装相应 npm 包</li>
+<li>复制源码</li>
+<li>启动 Node 服务</li>
+</ol>
+</li>
+<li>根目录下的 <code>docker-compose.yml</code>：根据不同目录下的 Dockerfile 构建镜像，并根据配置依赖按照一定的顺序创建启动容器实例</li>
+<li>相关 Dockerfile 和 docker-compose.yml 已经放到 <a target="_blank" rel="noopener" href="https://github.com/nepaul/learn-web-development-by-codes/tree/master/docker">github</a>，可直接查阅，本文就不贴了。</li>
+<li>所有配置完成后，只需要一条命令就可以启动整套系统服务：<code>docker-compose up</code>。默认会以前台启动，应用的输出会显示在前台。</li>
+</ul>
+<h2 id="好文必读"><a href="#好文必读" class="headerlink" title="好文必读"></a>好文必读</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://docs.docker.com/engine/userguide/eng-image/dockerfile_best-practices/">Best practices for writing Dockerfiles</a>：<strong>最佳实践，每位使用 Docker 的人员必读！</strong></li>
+<li><a target="_blank" rel="noopener" href="https://docs.docker.com/compose/">Docker Compose</a>：Compose 也是很常用的一个工具！</li>
+<li>使用任何一个镜像时的介绍，通常会阐明基本用法和一些最佳实践，比如 <a target="_blank" rel="noopener" href="https://store.docker.com/images/nginx">nginx</a></li>
+<li>各种常见镜像的一些最佳实践</li>
+<li>Node.js:  <a target="_blank" rel="noopener" href="https://github.com/nodejs/docker-node/blob/master/docs/BestPractices.md">Docker and Node.js Best Practices</a></li>
+<li>Nginx<ul>
+<li><a target="_blank" rel="noopener" href="https://auth0.com/blog/load-balancing-nodejs-applications-with-nginx-and-docker/">Load Balancing Node.js Applications with NGINX and Docker</a>: 非常好的介绍了如何用 Docker 和 Nginx 来做 Nodejs 应用的负载均衡，涉及到 Docker 的简单介绍和安装 以及具体的操作。文末还列出了几个非常好的相关资料</li>
+<li><a target="_blank" rel="noopener" href="https://blog.docker.com/2015/04/tips-for-deploying-nginx-official-image-with-docker/">Tips for Deploying NginxOffical Image with Docker</a></li>
+</ul>
+</li>
+</ul>
+<h2 id="常用手册"><a href="#常用手册" class="headerlink" title="常用手册"></a>常用手册</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://yeasy.gitbooks.io/docker_practice/">Docker - 从入门到实践</a>：新手建议阅读一遍，文章内容其实不算长，但是 Docker 的大部分内容都涉及到了。有什么概念忘了也可以快速温故。</li>
+<li><a target="_blank" rel="noopener" href="https://docs.docker.com/">官方文档</a>：Get Docker, Get started, User guide, Admin guide …</li>
+</ul>
+<h2 id="资源"><a href="#资源" class="headerlink" title="资源"></a>资源</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://store.docker.com/">docker store</a>：<strong>Docker 官方的镜像仓库</strong>，替代了以前的 Docker Hub.</li>
+<li><a target="_blank" rel="noopener" href="https://www.daocloud.io/mirror#accelerator-doc">国内最好用的 Docker 加速器 - DaoCloud</a>：<strong>国内一定要配置加速器</strong>（ DaoCloud 的介绍： <em>使用 Docker 的时候，需要经常从官方获取镜像，但是由于显而易见的网络原因，拉取镜像的过程非常耗时，严重影响使用 Docker 的体验。因此 DaoCloud 推出了加速器工具解决这个难题，通过智能路由和缓存机制，极大提升了国内网络访问 Docker Hub 的速度，目前已经拥有了广泛的用户群体，并得到了 Docker 官方的大力推荐。如果您是在国内的网络环境使用 Docker，那么 Docker 加速器一定能帮助到您。</em> ）<ul>
+<li><p>Mac 配置方法（Docker desktop community v2.2.05(43884)）: Preference -&gt; Docker Engine(修改配置，新增如下内容)</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">&#123;</span><br><span class="line"></span><br><span class="line">  &quot;registry-mirrors&quot;: [</span><br><span class="line"></span><br><span class="line">    &quot;https://docker.mirrors.ustc.edu.cn&quot;,</span><br><span class="line"></span><br><span class="line">    &quot;https://hub-mirror.c.163.com&quot;,</span><br><span class="line"></span><br><span class="line">    &quot;http://f1361db2.m.daocloud.io&quot;</span><br><span class="line">  ]</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+</ul>
+
+            </div>
+
+            <!-- Comments -->
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                
+    <hr />
+    <h3>Comments:</h3>
+    <div id="disqus_thread">
+        <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    </div>
+
+
+
+            </div>
+        </div>
+    </div>
+</article>
+
+    <!-- Footer -->
+    <hr />
+
+<!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                    <li>
+                        <a href="https://github.com/nepaul" target="_blank">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                    <!-- <li>
+                        <a href="https://twitter.com/xsnepaul" target="_blank">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://medium.com/@nepaul" target="_blank">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-medium fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li> -->
+                </ul>
+                <p class="copyright text-muted">      &copy; 2023 nepaul&nbsp;
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>, theme by <a target="_blank" rel="noopener" href="https://github.com/klugjo/hexo-theme-clean-blog">Clean Blog</a></p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+
+    <!-- After footer scripts -->
+    
+<!-- jQuery -->
+<!-- 
+<script src="/js/jquery.min.js"></script>
+ -->
+<script src="//lib.baomitu.com/jquery/2.2.4/jquery.min.js"></script>
+
+<!-- Bootstrap -->
+<!-- 
+<script src="/bootstrap/js/bootstrap.min.js"></script>
+ -->
+<script src="//lib.baomitu.com/twitter-bootstrap/3.3.6/js/bootstrap.min.js"></script>
+
+<!-- Gallery -->
+<!-- <script src="//cdn.rawgit.com/noelboss/featherlight/1.3.5/release/featherlight.min.js" type="text/javascript" charset="utf-8"></script> -->
+<script src="//lib.baomitu.com/featherlight/1.3.5/featherlight.min.js"></script>
+
+<!-- Disqus Comments -->
+
+<script type="text/javascript">
+    var disqus_shortname = '';
+
+    (function(){
+        var dsq = document.createElement('script');
+        dsq.type = 'text/javascript';
+        dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+</body>
+
+</html>

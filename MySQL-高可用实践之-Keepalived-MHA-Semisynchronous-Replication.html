@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!--Description-->
+    
+        <meta name="description" content="基于 MySQL5.7, Semisynchronous Replication(MySQL 半同步复制), Keepalived, MHA 的 MySQL 高可用方案
+
+MySQL, 用得最多最广泛的关系型数据库。 在生产环境中，难免遇到诸如 需要重启服务器或者 MySQL 服务莫名宕了 等问题。">
+    
+
+    <!--Author-->
+    
+        <meta name="author" content="nepaul">
+    
+
+    <!--Open Graph Title-->
+    
+        <meta property="og:title" content="MySQL 高可用实践"/>
+    
+
+    <!--Open Graph Site Name-->
+    <meta property="og:site_name" content="DesignBytes"/>
+
+    <!--Page Cover-->
+    
+        <meta property="og:image" content=""/>
+    
+
+    
+        <link rel="icon" href="favicon/favicon.ico">
+    
+    <!-- Title -->
+    
+    <title>MySQL 高可用实践 - DesignBytes</title>
+
+    <!-- Bootstrap Core CSS -->
+    <!-- 
+<link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css">
+ -->
+    <link href="//lib.baomitu.com/twitter-bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+
+    <!-- Custom Fonts -->
+    <link href="//lib.baomitu.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <style>
+        @font-face{font-family:Lora;font-style:normal;font-weight:regular;src:url(//lib.baomitu.com/fonts/lora/lora-regular.eot);src:local('Lora'),local('Lora-Normal'),url(//lib.baomitu.com/fonts/lora/lora-regular.eot?#iefix) format('embedded-opentype'),url(//lib.baomitu.com/fonts/lora/lora-regular.woff2) format('woff2'),url(//lib.baomitu.com/fonts/lora/lora-regular.woff) format('woff'),url(//lib.baomitu.com/fonts/lora/lora-regular.ttf) format('truetype'),url(//lib.baomitu.com/fonts/lora/lora-regular.svg#Lora) format('svg')}@font-face{font-family:Lora;font-style:normal;font-weight:700;src:url(//lib.baomitu.com/fonts/lora/lora-700.eot);src:local('Lora'),local('Lora-Normal'),url(//lib.baomitu.com/fonts/lora/lora-700.eot?#iefix) format('embedded-opentype'),url(//lib.baomitu.com/fonts/lora/lora-700.woff2) format('woff2'),url(//lib.baomitu.com/fonts/lora/lora-700.woff) format('woff'),url(//lib.baomitu.com/fonts/lora/lora-700.ttf) format('truetype'),url(//lib.baomitu.com/fonts/lora/lora-700.svg#Lora) format('svg')}@font-face{font-family:Lora;font-style:italic;font-weight:regular;src:url(//lib.baomitu.com/fonts/lora/lora-italic.eot);src:local('Lora'),local('Lora-Italic'),url(//lib.baomitu.com/fonts/lora/lora-italic.eot?#iefix) format('embedded-opentype'),url(//lib.baomitu.com/fonts/lora/lora-italic.woff2) format('woff2'),url(//lib.baomitu.com/fonts/lora/lora-italic.woff) format('woff'),url(//lib.baomitu.com/fonts/lora/lora-italic.ttf) format('truetype'),url(//lib.baomitu.com/fonts/lora/lora-italic.svg#Lora) format('svg')}@font-face{font-family:Lora;font-style:italic;font-weight:700;src:url(//lib.baomitu.com/fonts/lora/lora-700italic.eot);src:local('Lora'),local('Lora-Italic'),url(//lib.baomitu.com/fonts/lora/lora-700italic.eot?#iefix) format('embedded-opentype'),url(//lib.baomitu.com/fonts/lora/lora-700italic.woff2) format('woff2'),url(//lib.baomitu.com/fonts/lora/lora-700italic.woff) format('woff'),url(//lib.baomitu.com/fonts/lora/lora-700italic.ttf) format('truetype'),url(//lib.baomitu.com/fonts/lora/lora-700italic.svg#Lora) format('svg')}@font-face{font-family:'Open Sans';font-style:italic;font-weight:300;src:url(//lib.baomitu.com/fonts/open-sans/open-sans-300italic.eot);src:local('Open Sans'),local('OpenSans-Italic'),url(//lib.baomitu.com/fonts/open-sans/open-sans-300italic.eot?#iefix) format('embedded-opentype'),url(//lib.baomitu.com/fonts/open-sans/open-sans-300italic.woff2) format('woff2'),url(//lib.baomitu.com/fonts/open-sans/open-sans-300italic.woff) format('woff'),url(//lib.baomitu.com/fonts/open-sans/open-sans-300italic.ttf) format('truetype'),url(//lib.baomitu.com/fonts/open-sans/open-sans-300italic.svg#OpenSans) format('svg')}@font-face{font-family:'Open Sans';font-style:italic;font-weight:regular;src:url(//lib.baomitu.com/fonts/open-sans/open-sans-italic.eot);src:local('Open Sans'),local('OpenSans-Italic'),url(//lib.baomitu.com/fonts/open-sans/open-sans-italic.eot?#iefix) format('embedded-opentype'),url(//lib.baomitu.com/fonts/open-sans/open-sans-italic.woff2) format('woff2'),url(//lib.baomitu.com/fonts/open-sans/open-sans-italic.woff) format('woff'),url(//lib.baomitu.com/fonts/open-sans/open-sans-italic.ttf) format('truetype'),url(//lib.baomitu.com/fonts/open-sans/open-sans-italic.svg#OpenSans) format('svg')}@font-face{font-family:'Open Sans';font-style:italic;font-weight:600;src:url(//lib.baomitu.com/fonts/open-sans/open-sans-600italic.eot);src:local('Open Sans'),local('OpenSans-Italic'),url(//lib.baomitu.com/fonts/open-sans/open-sans-600italic.eot?#iefix) format('embedded-opentype'),url(//lib.baomitu.com/fonts/open-sans/open-sans-600italic.woff2) format('woff2'),url(//lib.baomitu.com/fonts/open-sans/open-sans-600italic.woff) format('woff'),url(//lib.baomitu.com/fonts/open-sans/open-sans-600italic.ttf) format('truetype'),url(//lib.baomitu.com/fonts/open-sans/open-sans-600italic.svg#OpenSans) format('svg')}@font-face{font-family:'Open Sans';font-style:italic;font-weight:700;src:url(//lib.baomitu.com/fonts/open-sans/open-sans-700italic.eot);src:local('Open Sans'),local('OpenSans-Italic'),url(//lib.baomitu.com/fonts/open-sans/open-sans-700italic.eot?#iefix) format('embedded-opentype'),url(//lib.baomitu.com/fonts/open-sans/open-sans-700italic.woff2) format('woff2'),url(//lib.baomitu.com/fonts/open-sans/open-sans-700italic.woff) format('woff'),url(//lib.baomitu.com/fonts/open-sans/open-sans-700italic.ttf) format('truetype'),url(//lib.baomitu.com/fonts/open-sans/open-sans-700italic.svg#OpenSans) format('svg')}@font-face{font-family:'Open Sans';font-style:italic;font-weight:800;src:url(//lib.baomitu.com/fonts/open-sans/open-sans-800italic.eot);src:local('Open Sans'),local('OpenSans-Italic'),url(//lib.baomitu.com/fonts/open-sans/open-sans-800italic.eot?#iefix) format('embedded-opentype'),url(//lib.baomitu.com/fonts/open-sans/open-sans-800italic.woff2) format('woff2'),url(//lib.baomitu.com/fonts/open-sans/open-sans-800italic.woff) format('woff'),url(//lib.baomitu.com/fonts/open-sans/open-sans-800italic.ttf) format('truetype'),url(//lib.baomitu.com/fonts/open-sans/open-sans-800italic.svg#OpenSans) format('svg')}@font-face{font-family:'Open Sans';font-style:normal;font-weight:regular;src:url(//lib.baomitu.com/fonts/open-sans/open-sans-regular.eot);src:local('Open Sans'),local('OpenSans-Normal'),url(//lib.baomitu.com/fonts/open-sans/open-sans-regular.eot?#iefix) format('embedded-opentype'),url(//lib.baomitu.com/fonts/open-sans/open-sans-regular.woff2) format('woff2'),url(//lib.baomitu.com/fonts/open-sans/open-sans-regular.woff) format('woff'),url(//lib.baomitu.com/fonts/open-sans/open-sans-regular.ttf) format('truetype'),url(//lib.baomitu.com/fonts/open-sans/open-sans-regular.svg#OpenSans) format('svg')}@font-face{font-family:'Open Sans';font-style:normal;font-weight:300;src:url(//lib.baomitu.com/fonts/open-sans/open-sans-300.eot);src:local('Open Sans'),local('OpenSans-Normal'),url(//lib.baomitu.com/fonts/open-sans/open-sans-300.eot?#iefix) format('embedded-opentype'),url(//lib.baomitu.com/fonts/open-sans/open-sans-300.woff2) format('woff2'),url(//lib.baomitu.com/fonts/open-sans/open-sans-300.woff) format('woff'),url(//lib.baomitu.com/fonts/open-sans/open-sans-300.ttf) format('truetype'),url(//lib.baomitu.com/fonts/open-sans/open-sans-300.svg#OpenSans) format('svg')}@font-face{font-family:'Open Sans';font-style:normal;font-weight:600;src:url(//lib.baomitu.com/fonts/open-sans/open-sans-600.eot);src:local('Open Sans'),local('OpenSans-Normal'),url(//lib.baomitu.com/fonts/open-sans/open-sans-600.eot?#iefix) format('embedded-opentype'),url(//lib.baomitu.com/fonts/open-sans/open-sans-600.woff2) format('woff2'),url(//lib.baomitu.com/fonts/open-sans/open-sans-600.woff) format('woff'),url(//lib.baomitu.com/fonts/open-sans/open-sans-600.ttf) format('truetype'),url(//lib.baomitu.com/fonts/open-sans/open-sans-600.svg#OpenSans) format('svg')}@font-face{font-family:'Open Sans';font-style:normal;font-weight:700;src:url(//lib.baomitu.com/fonts/open-sans/open-sans-700.eot);src:local('Open Sans'),local('OpenSans-Normal'),url(//lib.baomitu.com/fonts/open-sans/open-sans-700.eot?#iefix) format('embedded-opentype'),url(//lib.baomitu.com/fonts/open-sans/open-sans-700.woff2) format('woff2'),url(//lib.baomitu.com/fonts/open-sans/open-sans-700.woff) format('woff'),url(//lib.baomitu.com/fonts/open-sans/open-sans-700.ttf) format('truetype'),url(//lib.baomitu.com/fonts/open-sans/open-sans-700.svg#OpenSans) format('svg')}@font-face{font-family:'Open Sans';font-style:normal;font-weight:800;src:url(//lib.baomitu.com/fonts/open-sans/open-sans-800.eot);src:local('Open Sans'),local('OpenSans-Normal'),url(//lib.baomitu.com/fonts/open-sans/open-sans-800.eot?#iefix) format('embedded-opentype'),url(//lib.baomitu.com/fonts/open-sans/open-sans-800.woff2) format('woff2'),url(//lib.baomitu.com/fonts/open-sans/open-sans-800.woff) format('woff'),url(//lib.baomitu.com/fonts/open-sans/open-sans-800.ttf) format('truetype'),url(//lib.baomitu.com/fonts/open-sans/open-sans-800.svg#OpenSans) format('svg')}
+    </style>
+    <!-- <link href="//fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" rel="stylesheet" type="text/css"> -->
+    <!-- <link href="//fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css"> -->
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- Gallery -->
+    <!-- <link href="//cdn.rawgit.com/noelboss/featherlight/1.3.5/release/featherlight.min.css" type="text/css" rel="stylesheet" /> -->
+    <link href="//lib.baomitu.com/featherlight/1.3.5/featherlight.min.css" rel="stylesheet">
+
+    <!-- Google Analytics -->
+    
+    <script>
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+                    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+                m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+        ga('create', 'UA-63590316-1', 'auto');
+        ga('send', 'pageview');
+
+    </script>
+
+
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+
+    <!-- Menu -->
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">DesignBytes</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav navbar-right">
+                
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+                
+                    <li>
+                        <a href="/archives">Archives</a>
+                    </li>
+                
+            </ul>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+
+    <!-- Main Content -->
+    <!-- Page Header -->
+<!-- Set your background image for this header in your post front-matter: cover -->
+
+<header class="intro-header" style="background-image: url('https://images.unsplash.com/photo-1452716726610-30ed68426a6b?ixlib=rb-0.3.5&q=80&fm=jpg&crop=entropy&s=eb13d4961a078aca65cfa493a8026519')">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <h1>MySQL 高可用实践</h1>
+                    
+                    <span class="meta">
+                        <!-- Date and Author -->
+                        
+                            Posted by nepaul on
+                        
+                        2016-05-18
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+            <!-- Tags and categories -->
+           
+                <div class="col-lg-4 col-lg-offset-2 col-md-5 col-md-offset-1 post-tags">
+                    
+                        
+
+
+<a href="/tags/DB/">#DB</a>
+
+
+                    
+                </div>
+                <div class="col-lg-4 col-md-5 post-categories">
+                    
+                </div>
+            
+
+            <!-- Gallery -->
+            
+
+            <!-- Post Main Content -->
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <blockquote>
+<p>基于 MySQL5.7, Semisynchronous Replication(MySQL 半同步复制), Keepalived, MHA 的 MySQL 高可用方案</p>
+</blockquote>
+<p>MySQL, 用得最多最广泛的关系型数据库。 在生产环境中，难免遇到诸如 需要重启服务器或者 MySQL 服务莫名宕了 等问题。如何保证 MySQL 能够持续提供读写等服务，即 高可用性？</p>
+<p>本文主要讲述如何从无到有构建一套简单的 <strong>MySQL 高可用方案</strong>，少概念原理，多实操。 </p>
+<h2 id="概念及架构简介"><a href="#概念及架构简介" class="headerlink" title="概念及架构简介"></a>概念及架构简介</h2><ul>
+<li><strong>semi-synchronous Replication</strong>:  传统的 asynchronous 模式在 master 宕机时仍然有数据丢失的风险。MySQL5.5 之后提供了 semi-synchronous 模式，它会在 master 处理完一个事务并且等待至少一个支持 semi-synchronous 的 slave 确认收到该事件并将其写 入relay-log 之后才会返回。相较于前者，数据安全性更高。性能也无需担心，因为 <a target="_blank" rel="noopener" href="http://yoshinorimatsunobu.blogspot.ca/2014/04/semi-synchronous-replication-at-facebook.html">facebook</a> 也用了。</li>
+<li><a target="_blank" rel="noopener" href="http://www.keepalived.org/"><strong>Keepalived</strong></a>:  基于 <a target="_blank" rel="noopener" href="https://tools.ietf.org/html/rfc3768">VRRP</a> 实现的路由管理工具，在 负载均衡 和 高可用 场景中应用广泛。这里主要用来创建 VIP(虚拟路由)</li>
+<li><strong>MHA</strong>: 即 <a target="_blank" rel="noopener" href="https://code.google.com/p/mysql-master-ha/">mysql-master-ha</a>, 最主要的一个功能是监控 MySQL 主从集群( 确切地说主要监控 Master), 在 Master 出现故障后自动选择一个 Slave 提升为 Master，并且可以保证新 Master 和 Slave 的一致性。</li>
+</ul>
+<p>来看一下 <strong>架构图</strong></p>
+<blockquote>
+<p>应用通过 VIP(虚拟路由，由 Keepalived 创建)访问 MySQL 集群。一主(图 M )二从(图 S1 和 S2)，S2 作备用主库。一旦原 Master 节点出现故障，MHA 自动将主库切换到 S1，并且 S2 随之连接到新的 Master。MHA 同时通过 master_ip_failover_script 脚本停止原 Master 节点上的 Keepalived，路由自动切换到 新 Master。这时候外部应用实际访问的是 S1 了，不会出现 MySQL 突然无法使用的问题。</p>
+</blockquote>
+<p><img src="http://7xja18.com1.z0.glb.clouddn.com/mysql-ha-mha.png" alt="mysql-mha"></p>
+<p><strong>机器规划</strong></p>
+<table>
+<thead>
+<tr>
+<th>Host</th>
+<th>IP</th>
+<th>VIP</th>
+<th>Role</th>
+<th>Software</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>M</td>
+<td>10.20.78.241</td>
+<td>10.20.78.11</td>
+<td>Master</td>
+<td>MySQL5.7 Keepalived MHA-Node</td>
+</tr>
+<tr>
+<td>S1</td>
+<td>10.20.78.243</td>
+<td>备用</td>
+<td>candidate_master (Slave)</td>
+<td>MySQL5.7 Keepalived MHA-Node</td>
+</tr>
+<tr>
+<td>S2</td>
+<td>10.20.78.245</td>
+<td>-</td>
+<td>Slave</td>
+<td>MySQL5.7 MHA-Node</td>
+</tr>
+<tr>
+<td>MHA-Manager</td>
+<td>10.20.78.227</td>
+<td>-</td>
+<td>MHA Manager</td>
+<td>MHA-Node MHA-Manger</td>
+</tr>
+</tbody></table>
+<p>M 出现故障后：</p>
+<table>
+<thead>
+<tr>
+<th>Host</th>
+<th>IP</th>
+<th>VIP</th>
+<th>Role</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>M</td>
+<td>10.20.78.241</td>
+<td>-</td>
+<td>stoped</td>
+</tr>
+<tr>
+<td>S1</td>
+<td>10.20.78.243</td>
+<td>10.20.78.11</td>
+<td>master</td>
+</tr>
+<tr>
+<td>S2</td>
+<td>10.20.78.245</td>
+<td>-</td>
+<td>Slave</td>
+</tr>
+<tr>
+<td>MHA-Manager</td>
+<td>10.20.78.227</td>
+<td>-</td>
+<td>MHA Manager(stoped)</td>
+</tr>
+</tbody></table>
+<h2 id="集群的搭建"><a href="#集群的搭建" class="headerlink" title="集群的搭建"></a>集群的搭建</h2><p>整个集群搭建安装分为 MySQL 半同步复制、MHA 和 VIP(Keepalived) 三大部分。几乎都是以命令的方式来展示。</p>
+<p>在安装具体的软件之前，对所有机器 <code>yum -y upgrade</code> (这是一个很好的习惯)。</p>
+<p>所有服务器上 安装 EPEL( MHA 依赖包需要)：<code>rpm -Uvh https://dl.fedoraproject.org/pub/epel/epel-release-latest-6.noarch.rpm</code></p>
+<p>下面开始分别从 MySQL 的半同步复制、Keepalived(VIP) 和 MHA 三方面具体说明。</p>
+<h2 id="Semisynchronous-Replication"><a href="#Semisynchronous-Replication" class="headerlink" title="Semisynchronous Replication"></a>Semisynchronous Replication</h2><p>MySQL 在 5.5 以上的版本支持 半同步 复制，并且需要已经配置好 主从复制。</p>
+<h4 id="安装-MySQL-5-7"><a href="#安装-MySQL-5-7" class="headerlink" title="安装 MySQL 5.7"></a>安装 MySQL 5.7</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">// 安装</span><br><span class="line">wget http://dev.mysql.com/get/mysql57-community-release-el6-7.noarch.rpm</span><br><span class="line">yum localinstall mysql57-community-release-el6-7.noarch.rpm</span><br><span class="line"></span><br><span class="line">// 检查是否安装成功</span><br><span class="line">service mysqld start</span><br><span class="line">service mysqld status</span><br><span class="line">mysql --version</span><br><span class="line"></span><br><span class="line">// 初始的安全配置</span><br><span class="line">grep &#x27;temporary password&#x27; /var/log/mysqld.log</span><br><span class="line">mysql_secure_installation //根据提示操作, 包括设置 root 新密码等操作</span><br><span class="line"></span><br><span class="line">// 开始使用</span><br><span class="line">mysql -uroot -p</span><br></pre></td></tr></table></figure>
+
+<h4 id="配置-MySQL-主从同步"><a href="#配置-MySQL-主从同步" class="headerlink" title="配置 MySQL 主从同步"></a>配置 MySQL 主从同步</h4><p><strong>Master</strong> 机器上的操作：</p>
+<ul>
+<li><p>修改 my.cnf</p>
+  <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[mysqld]</span><br><span class="line">server-id=1		## 在整个 MySQL 集群中必须唯一</span><br><span class="line">log-bin=mysql-bin</span><br><span class="line">binlog_format=ROW</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>重启服务：<code>service mysqld restart</code></p>
+</li>
+<li><p>创建 slave 同步需要的用户: <code>mysql&gt; GRANT REPLICATION SLAVE ON *.* TO &#39;repl_username&#39;@&#39;10.20.%.%&#39; IDENTIFIED BY &#39;repl_password&#39;;</code></p>
+</li>
+<li><p>查看 master 状态：<code>mysql&gt; show master status\G</code></p>
+</li>
+</ul>
+<p><strong>Slave</strong> 机器上的操作：</p>
+<ul>
+<li><p>修改 my.cnf：</p>
+  <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[mysqld]</span><br><span class="line">server-id=2			</span><br><span class="line">       log-bin=mysql-bin            // 只需要在 S1 节点上加入这个配置，因为该节点是作为 MySQL Master 的备机</span><br><span class="line">relay_log=relay-log</span><br><span class="line">skip-slave-start</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>重启 mysql: <code>service mysqld restart</code></p>
+</li>
+<li><p><strong>S1</strong>(因为是作主备) 上创建 slave 同步需要的用户: mysql&gt; GRANT REPLICATION SLAVE ON <em>.</em> TO ‘repl_username‘@’10.20.%.%’ IDENTIFIED BY ‘repl_password’;</p>
+</li>
+<li><p>S2 上创建一个用户方便后期 mha-manager 操作 <code>GRANT ALL PRIVILEGES ON *.* TO &#39;repl_username&#39;@&#39;10.20.%.%&#39; IDENTIFIED BY &#39;repl_password&#39;;</code></p>
+</li>
+<li><p>配置 Master 信息：<br><code>mysql&gt; CHANGE MASTER TO MASTER_HOST=&#39;10.20.78.241&#39;,MASTER_PORT=3306,MASTER_USER=&#39;mha&#39;,MASTER_PASSWORD=&#39;King@123&#39;,MASTER_LOG_FILE=&#39;mysql-bin.000009&#39;,MASTER_LOG_POS=496;</code></p>
+</li>
+<li><p>启动 slave 并 查看状态</p>
+  <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; START SLAVE	</span><br><span class="line">mysql&gt; SHOW SLAVE STATUS\G</span><br></pre></td></tr></table></figure></li>
+</ul>
+<p><strong>主从同步配置完成</strong>，检查状态</p>
+<ul>
+<li>回到 Master 机器，查看 slave 连接情况：<code>mysql&gt; show slave hosts;</code></li>
+<li>Master 上创建数据库 <code>mysql&gt; CREATE DATABASE sync_test;</code>，在两个 Slave 上查看，发现同步成功。</li>
+</ul>
+<h4 id="半同步"><a href="#半同步" class="headerlink" title="半同步"></a>半同步</h4><ul>
+<li><p>Master</p>
+  <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">// 动态加载插件</span><br><span class="line">mysql&gt; INSTALL PLUGIN rpl_semi_sync_master SONAME &#x27;semisync_master.so&#x27;;	</span><br><span class="line">mysql&gt; SET GLOBAL rpl_semi_sync_master_enabled = &#123;0|1&#125;; // 1 开启</span><br><span class="line">mysql&gt; SET GLOBAL rpl_semi_sync_master_timeout = N; // 单位是 ms</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>Slave</p>
+  <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">// 动态加载插件</span><br><span class="line">mysql&gt; INSTALL PLUGIN rpl_semi_sync_slave SONAME &#x27;semisync_slave.so&#x27;;	</span><br><span class="line">mysql&gt; SET GLOBAL rpl_semi_sync_slave_enabled = &#123;0|1&#125;; / 1 开启</span><br><span class="line">mysql&gt; STOP SLAVE IO_THREAD; START SLAVE IO_THREAD;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>半同步状态监控</p>
+<pre><code>  可以分别在 Master 和 Slave 上查看
+  查看配置：`SHOW VARIABLES LIKE &#39;rpl_semi_sync%&#39;;`
+  查看状态：`SHOW STATUS LIKE &#39;Rpl_semi_sync%&#39;;`
+</code></pre>
+</li>
+</ul>
+<h2 id="Keepalived"><a href="#Keepalived" class="headerlink" title="Keepalived"></a>Keepalived</h2><blockquote>
+<p>需要在 M 和 S1 两台服务器上安装配置</p>
+</blockquote>
+<ul>
+<li><p>安装, 最后一行编辑的 keepalived.conf 在<a target="_blank" rel="noopener" href="https://gist.github.com/nepaul/d6b08a94004be8609d72a5fb2be0022b#file-keepalived-conf">这里</a></p>
+  <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">wget http://www.keepalived.org/software/keepalived-1.2.20.tar.gz</span><br><span class="line">tar -zxvf keepalived-1.2.20.tar.gz </span><br><span class="line">cd keepalived-1.2.20</span><br><span class="line"> ./configure --prefix=/usr/local/keepalived</span><br><span class="line">make &amp;&amp; make install</span><br><span class="line">cp /usr/local/keepalived/etc/rc.d/init.d/keepalived /etc/init.d/keepalived</span><br><span class="line">cp /usr/local/keepalived/sbin/keepalived /usr/sbin/</span><br><span class="line">cp /usr/local/keepalived/etc/sysconfig/keepalived /etc/sysconfig/</span><br><span class="line">mkdir -p /etc/keepalived/</span><br><span class="line">cp /usr/local/keepalived/etc/keepalived/keepalived.conf /etc/keepalived/keepalived.conf</span><br><span class="line">vim /etc/keepalived/keepalived.conf</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>启动 keeplived： <code>service keepalived start</code></p>
+</li>
+<li><p>查看虚拟 IP: <code>ip a</code>，此时可以看到在 M 上虚拟 IP 挂载成功，S1 上没有该 IP。一旦 M 上的 keeplived 服务挂掉，虚拟 IP 自动挂载到 S1 上。</p>
+<blockquote>
+<p>若没有挂载成功，可查看默认 <strong>日志文件：&#x2F;var&#x2F;log&#x2F;message</strong></p>
+</blockquote>
+</li>
+<li><p>给 MySQl 可操作 Keepalived 启停的权限</p>
+<p>  通过 <code>visudo</code> 命令，在 &#x2F;etc&#x2F;sudoers 文件末尾添加如下几行：</p>
+  <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">#mysql sudo keepalived</span><br><span class="line">Host_Alias HOSTKEEP =110.20.78.241 # 本机IP</span><br><span class="line">Cmnd_Alias COMKEEP = /etc/init.d/keepalived stop, /etc/init.d/keepalived start, /etc/init.d/keepalived restart, /etc/init.d/keepalived reload ## reload is used to check connection error</span><br><span class="line">User_Alias USERKEEP = mysql</span><br><span class="line">USERKEEP  HOSTKEEP=(ALL)  NOPASSWD:COMKEEP</span><br><span class="line"></span><br><span class="line">#Defaults	requiretty # 注释掉</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h2 id="MHA"><a href="#MHA" class="headerlink" title="MHA"></a>MHA</h2><blockquote>
+<p>MHA 由 Node 和 Manager 两部分组成，Node 安装在每一台 MySQL 服务器上，而 MHA-Manager 需要同时安装 Node 和 Manager.</p>
+</blockquote>
+<h4 id="三台-MySQL-服务上创建-MHA-Manger-需要的用户"><a href="#三台-MySQL-服务上创建-MHA-Manger-需要的用户" class="headerlink" title="三台 MySQL 服务上创建 MHA-Manger 需要的用户"></a>三台 MySQL 服务上创建 MHA-Manger 需要的用户</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">CREATE USER &#x27;mha_manager&#x27;@&#x27;172.16.%.%&#x27; IDENTIFIED BY &#x27;Crasheye+!@#123&#x27;;</span><br><span class="line">GRANT ALL ON *.* TO &#x27;mha_manager&#x27;@&#x27;172.16.%.%&#x27;;</span><br></pre></td></tr></table></figure>
+
+<h4 id="各节点间的SSH-公钥免密码登陆"><a href="#各节点间的SSH-公钥免密码登陆" class="headerlink" title="各节点间的SSH 公钥免密码登陆"></a>各节点间的SSH 公钥免密码登陆</h4><blockquote>
+<p>MHA Manager 使用 SSH 连接到各个 MySQL 服务器，最新 Slave 节点上的MHA Node 也要用 SSH (scp) 把 relay log 文件发给各个从库节点</p>
+</blockquote>
+<ul>
+<li><p><strong>创建 RSA Keys</strong>(<a target="_blank" rel="noopener" href="https://help.ubuntu.com/community/SSH/OpenSSH/Keys">详情</a>)</p>
+  <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mkdir ~/.ssh</span><br><span class="line">chmod 700 ~/.ssh</span><br><span class="line">ssh-keygen -t rsa</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>在四台服务器上进行 ssh 配置</strong></p>
+  <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">ssh-copy-id -i /root/.ssh/id_rsa.pub root@10.20.78.241</span><br><span class="line">ssh-copy-id -i /root/.ssh/id_rsa.pub root@10.20.78.243</span><br><span class="line">ssh-copy-id -i /root/.ssh/id_rsa.pub root@10.20.78.245</span><br><span class="line">ssh-copy-id -i /root/.ssh/id_rsa.pub root@10.20.78.227</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h4 id="MHA-安装"><a href="#MHA-安装" class="headerlink" title="MHA 安装"></a>MHA 安装</h4><h5 id="三台-MySQL-服务器上安装-MHA-Node"><a href="#三台-MySQL-服务器上安装-MHA-Node" class="headerlink" title="三台 MySQL 服务器上安装 MHA-Node"></a>三台 MySQL 服务器上安装 MHA-Node</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">yum install perl-DBD-MySQL -y</span><br><span class="line">rpm -Uvh https://mysql-master-ha.googlecode.com/files/mha4mysql-node-0.52-0.noarch.rpm  #需翻墙</span><br></pre></td></tr></table></figure>
+
+<h5 id="MHA-Manager-结点"><a href="#MHA-Manager-结点" class="headerlink" title="MHA-Manager 结点"></a>MHA-Manager 结点</h5><ul>
+<li><p>MHA-Manager 的安装</p>
+  <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">yum install -y perl-DBD-MySQL perl-Config-Tiny perl-Log-Dispatch perl-Parallel-ForkManager</span><br><span class="line">rpm -Uvh https://mysql-master-ha.googlecode.com/files/mha4mysql-node-0.52-0.noarch.rpm</span><br><span class="line">rpm -Uvh https://mysql-master-ha.googlecode.com/files/mha4mysql-manager-0.52-0.noarch.rpm</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>配置 &#x2F;etc&#x2F;mha&#x2F;mha.conf(具体查看<a target="_blank" rel="noopener" href="https://gist.github.com/nepaul/d6b08a94004be8609d72a5fb2be0022b#file-mha-conf">这里</a>)</p>
+</li>
+<li><p>编辑 <strong>master_ip_failover</strong>  脚本：<code>/usr/local/mha/master_ip_failover</code></p>
+<blockquote>
+<p>主要作用是 kill 原 Master 服务器上的 Keeplived，核心代码如下(<a target="_blank" rel="noopener" href="https://gist.github.com/nepaul/d6b08a94004be8609d72a5fb2be0022b#file-mha-master_ip_failover">这里</a>有完整可用的代码)</p>
+</blockquote>
+  <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">my $vip = &#x27;10.20.78.11&#x27;;</span><br><span class="line">my $ssh_start_vip = &quot;/etc/init.d/keepalived start&quot;;</span><br><span class="line">my $ssh_stop_vip = &quot;/etc/init.d/keepalived stop&quot;;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>检查节点间的 ssh 连接: <code>masterha_check_ssh  --conf=/etc/mha/mha.conf</code></p>
+<blockquote>
+<p>成功会在终端输出 「All SSH connection tests passed successfully」</p>
+</blockquote>
+</li>
+<li><p>检查MySQL 主从同步： <code>masterha_check_repl --conf=/etc/mha/mha.conf</code></p>
+<blockquote>
+<p>成功会在终端输出 <code>MySQL Replication Health is OK.</code></p>
+</blockquote>
+</li>
+<li><p>启动 MHA Manager: <code>masterha_manager  --conf=/etc/mha/mha.conf</code></p>
+</li>
+<li><p>查看 MHA 状态 <code>masterha_check_status --conf=/etc/mha/mha.conf</code></p>
+<blockquote>
+<p>正常显 「PING_OK」，否则显示 「NOT_RUNNING」</p>
+</blockquote>
+</li>
+</ul>
+<p><strong>全部配置完毕，enjoy it!</strong></p>
+<h2 id="Fail-Over-及-故障恢复"><a href="#Fail-Over-及-故障恢复" class="headerlink" title="Fail-Over 及 故障恢复"></a>Fail-Over 及 故障恢复</h2><h2 id="FAQ"><a href="#FAQ" class="headerlink" title="FAQ"></a>FAQ</h2><ol>
+<li><p>配置 ssh 免密码登陆</p>
+<p>   Q: <code>Permission denied (publickey,gssapi-keyex,gssapi-with-mic).</code></p>
+<p> A: 查看 ssh 配置文件(<code>vim  /etc/ssh/sshd_config</code>)，确认一下参数为 </p>
+ <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">PasswordAuthentication yes</span><br><span class="line">RSAAuthentication yes</span><br><span class="line">PubkeyAuthentication yes</span><br></pre></td></tr></table></figure></li>
+<li><p>查看 mysql 所有 user: <code>SELECT DISTINCT CONCAT(&#39;User: &#39;&#39;&#39;,user,&#39;&#39;&#39;@&#39;&#39;&#39;,host,&#39;&#39;&#39;;&#39;) AS query FROM mysql.user;</code></p>
+</li>
+<li><p>MHA check rel 报错：<br>Q: <code>error][/usr/share/perl5/vendor_perl/MHA/MasterMonitor.pm, ln424] Error happened on checking configurations. Argument &quot;1 # M-hM-/M-% MySQL M-fM-0M-8M-hM-?M-^\M-dM-8M-\rM-eM-^A...&quot; isn&#39;t numeric in numeric ge (&gt;=) at /usr/share/perl5/vendor_perl/MHA/ServerManager.pm line 1157.</code><br>A: 很有可能是 mha 的配置文件中有中文，包括注释，去掉再试试</p>
+</li>
+<li><p>如何在 MySQL 间迁移数据<br> 迁移指定某个数据库<br>  数据源 MySQL 服务器：<code>shell&gt; mysqldump -uroot -p database_name &gt; database_name.sql</code><br>  目标源 MySQL 服务器：</p>
+ <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; create database_name;</span><br><span class="line">mysql&gt; use database_name;</span><br><span class="line">mysql&gt; source database_name.sql;</span><br></pre></td></tr></table></figure>
+<p><a target="_blank" rel="noopener" href="http://dev.mysql.com/doc/refman/5.7/en/replication-snapshot-method.html">官方资料</a></p>
+</li>
+</ol>
+<h2 id="Links"><a href="#Links" class="headerlink" title="Links"></a>Links</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://code.google.com/p/mysql-master-ha/wiki/UseCases">mysql-master-ha-usercases</a></li>
+<li><a target="_blank" rel="noopener" href="https://mysqlstepbystep.com/2015/06/01/mysql-high-available-with-mha-2/">MySQL High Available with MHA</a> (本文的架构图即出于此)</li>
+<li><a target="_blank" rel="noopener" href="http://zhangjianjian.blog.51cto.com/2944771/1632109">MySQL5.6一主多从的半同步复制实例</a> (开启了 GTID)</li>
+<li><a target="_blank" rel="noopener" href="http://cenalulu.github.io/mysql/mysql-5-6-gtid-basic/">MySQL5.6 GTID新特性实践</a></li>
+<li><a target="_blank" rel="noopener" href="http://www.tecmint.com/install-latest-mysql-on-rhel-centos-and-fedora/">How to Install Latest MySQL 5.7.9 on RHEL&#x2F;CentOS 7&#x2F;6&#x2F;5 and Fedora 23&#x2F;22&#x2F;21</a></li>
+</ul>
+
+            </div>
+
+            <!-- Comments -->
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                
+    <hr />
+    <h3>Comments:</h3>
+    <div id="disqus_thread">
+        <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    </div>
+
+
+
+            </div>
+        </div>
+    </div>
+</article>
+
+    <!-- Footer -->
+    <hr />
+
+<!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                    <li>
+                        <a href="https://github.com/nepaul" target="_blank">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                    <!-- <li>
+                        <a href="https://twitter.com/xsnepaul" target="_blank">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://medium.com/@nepaul" target="_blank">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-medium fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li> -->
+                </ul>
+                <p class="copyright text-muted">      &copy; 2023 nepaul&nbsp;
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>, theme by <a target="_blank" rel="noopener" href="https://github.com/klugjo/hexo-theme-clean-blog">Clean Blog</a></p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+
+    <!-- After footer scripts -->
+    
+<!-- jQuery -->
+<!-- 
+<script src="/js/jquery.min.js"></script>
+ -->
+<script src="//lib.baomitu.com/jquery/2.2.4/jquery.min.js"></script>
+
+<!-- Bootstrap -->
+<!-- 
+<script src="/bootstrap/js/bootstrap.min.js"></script>
+ -->
+<script src="//lib.baomitu.com/twitter-bootstrap/3.3.6/js/bootstrap.min.js"></script>
+
+<!-- Gallery -->
+<!-- <script src="//cdn.rawgit.com/noelboss/featherlight/1.3.5/release/featherlight.min.js" type="text/javascript" charset="utf-8"></script> -->
+<script src="//lib.baomitu.com/featherlight/1.3.5/featherlight.min.js"></script>
+
+<!-- Disqus Comments -->
+
+<script type="text/javascript">
+    var disqus_shortname = '';
+
+    (function(){
+        var dsq = document.createElement('script');
+        dsq.type = 'text/javascript';
+        dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+</body>
+
+</html>

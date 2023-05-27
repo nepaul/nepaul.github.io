@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!--Description-->
+    
+        <meta name="description" content="VSCode，即  Visual Studio Code ，是 微软 的一个开源编辑器。快速、稳定，内置调试、git ，并且有类似 atom 和 sublime 的插件扩展机制。现在我基本以此来作为 Web 开发的编辑器，强烈推荐给大家。
+背景每次新建一个项目免不了配置 .editorconfig文">
+    
+
+    <!--Author-->
+    
+        <meta name="author" content="nepaul">
+    
+
+    <!--Open Graph Title-->
+    
+        <meta property="og:title" content="第一个 vscode 插件"/>
+    
+
+    <!--Open Graph Site Name-->
+    <meta property="og:site_name" content="DesignBytes"/>
+
+    <!--Page Cover-->
+    
+        <meta property="og:image" content=""/>
+    
+
+    
+        <link rel="icon" href="favicon/favicon.ico">
+    
+    <!-- Title -->
+    
+    <title>第一个 vscode 插件 - DesignBytes</title>
+
+    <!-- Bootstrap Core CSS -->
+    <!-- 
+<link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css">
+ -->
+    <link href="//lib.baomitu.com/twitter-bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+
+    <!-- Custom Fonts -->
+    <link href="//lib.baomitu.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <style>
+        @font-face{font-family:Lora;font-style:normal;font-weight:regular;src:url(//lib.baomitu.com/fonts/lora/lora-regular.eot);src:local('Lora'),local('Lora-Normal'),url(//lib.baomitu.com/fonts/lora/lora-regular.eot?#iefix) format('embedded-opentype'),url(//lib.baomitu.com/fonts/lora/lora-regular.woff2) format('woff2'),url(//lib.baomitu.com/fonts/lora/lora-regular.woff) format('woff'),url(//lib.baomitu.com/fonts/lora/lora-regular.ttf) format('truetype'),url(//lib.baomitu.com/fonts/lora/lora-regular.svg#Lora) format('svg')}@font-face{font-family:Lora;font-style:normal;font-weight:700;src:url(//lib.baomitu.com/fonts/lora/lora-700.eot);src:local('Lora'),local('Lora-Normal'),url(//lib.baomitu.com/fonts/lora/lora-700.eot?#iefix) format('embedded-opentype'),url(//lib.baomitu.com/fonts/lora/lora-700.woff2) format('woff2'),url(//lib.baomitu.com/fonts/lora/lora-700.woff) format('woff'),url(//lib.baomitu.com/fonts/lora/lora-700.ttf) format('truetype'),url(//lib.baomitu.com/fonts/lora/lora-700.svg#Lora) format('svg')}@font-face{font-family:Lora;font-style:italic;font-weight:regular;src:url(//lib.baomitu.com/fonts/lora/lora-italic.eot);src:local('Lora'),local('Lora-Italic'),url(//lib.baomitu.com/fonts/lora/lora-italic.eot?#iefix) format('embedded-opentype'),url(//lib.baomitu.com/fonts/lora/lora-italic.woff2) format('woff2'),url(//lib.baomitu.com/fonts/lora/lora-italic.woff) format('woff'),url(//lib.baomitu.com/fonts/lora/lora-italic.ttf) format('truetype'),url(//lib.baomitu.com/fonts/lora/lora-italic.svg#Lora) format('svg')}@font-face{font-family:Lora;font-style:italic;font-weight:700;src:url(//lib.baomitu.com/fonts/lora/lora-700italic.eot);src:local('Lora'),local('Lora-Italic'),url(//lib.baomitu.com/fonts/lora/lora-700italic.eot?#iefix) format('embedded-opentype'),url(//lib.baomitu.com/fonts/lora/lora-700italic.woff2) format('woff2'),url(//lib.baomitu.com/fonts/lora/lora-700italic.woff) format('woff'),url(//lib.baomitu.com/fonts/lora/lora-700italic.ttf) format('truetype'),url(//lib.baomitu.com/fonts/lora/lora-700italic.svg#Lora) format('svg')}@font-face{font-family:'Open Sans';font-style:italic;font-weight:300;src:url(//lib.baomitu.com/fonts/open-sans/open-sans-300italic.eot);src:local('Open Sans'),local('OpenSans-Italic'),url(//lib.baomitu.com/fonts/open-sans/open-sans-300italic.eot?#iefix) format('embedded-opentype'),url(//lib.baomitu.com/fonts/open-sans/open-sans-300italic.woff2) format('woff2'),url(//lib.baomitu.com/fonts/open-sans/open-sans-300italic.woff) format('woff'),url(//lib.baomitu.com/fonts/open-sans/open-sans-300italic.ttf) format('truetype'),url(//lib.baomitu.com/fonts/open-sans/open-sans-300italic.svg#OpenSans) format('svg')}@font-face{font-family:'Open Sans';font-style:italic;font-weight:regular;src:url(//lib.baomitu.com/fonts/open-sans/open-sans-italic.eot);src:local('Open Sans'),local('OpenSans-Italic'),url(//lib.baomitu.com/fonts/open-sans/open-sans-italic.eot?#iefix) format('embedded-opentype'),url(//lib.baomitu.com/fonts/open-sans/open-sans-italic.woff2) format('woff2'),url(//lib.baomitu.com/fonts/open-sans/open-sans-italic.woff) format('woff'),url(//lib.baomitu.com/fonts/open-sans/open-sans-italic.ttf) format('truetype'),url(//lib.baomitu.com/fonts/open-sans/open-sans-italic.svg#OpenSans) format('svg')}@font-face{font-family:'Open Sans';font-style:italic;font-weight:600;src:url(//lib.baomitu.com/fonts/open-sans/open-sans-600italic.eot);src:local('Open Sans'),local('OpenSans-Italic'),url(//lib.baomitu.com/fonts/open-sans/open-sans-600italic.eot?#iefix) format('embedded-opentype'),url(//lib.baomitu.com/fonts/open-sans/open-sans-600italic.woff2) format('woff2'),url(//lib.baomitu.com/fonts/open-sans/open-sans-600italic.woff) format('woff'),url(//lib.baomitu.com/fonts/open-sans/open-sans-600italic.ttf) format('truetype'),url(//lib.baomitu.com/fonts/open-sans/open-sans-600italic.svg#OpenSans) format('svg')}@font-face{font-family:'Open Sans';font-style:italic;font-weight:700;src:url(//lib.baomitu.com/fonts/open-sans/open-sans-700italic.eot);src:local('Open Sans'),local('OpenSans-Italic'),url(//lib.baomitu.com/fonts/open-sans/open-sans-700italic.eot?#iefix) format('embedded-opentype'),url(//lib.baomitu.com/fonts/open-sans/open-sans-700italic.woff2) format('woff2'),url(//lib.baomitu.com/fonts/open-sans/open-sans-700italic.woff) format('woff'),url(//lib.baomitu.com/fonts/open-sans/open-sans-700italic.ttf) format('truetype'),url(//lib.baomitu.com/fonts/open-sans/open-sans-700italic.svg#OpenSans) format('svg')}@font-face{font-family:'Open Sans';font-style:italic;font-weight:800;src:url(//lib.baomitu.com/fonts/open-sans/open-sans-800italic.eot);src:local('Open Sans'),local('OpenSans-Italic'),url(//lib.baomitu.com/fonts/open-sans/open-sans-800italic.eot?#iefix) format('embedded-opentype'),url(//lib.baomitu.com/fonts/open-sans/open-sans-800italic.woff2) format('woff2'),url(//lib.baomitu.com/fonts/open-sans/open-sans-800italic.woff) format('woff'),url(//lib.baomitu.com/fonts/open-sans/open-sans-800italic.ttf) format('truetype'),url(//lib.baomitu.com/fonts/open-sans/open-sans-800italic.svg#OpenSans) format('svg')}@font-face{font-family:'Open Sans';font-style:normal;font-weight:regular;src:url(//lib.baomitu.com/fonts/open-sans/open-sans-regular.eot);src:local('Open Sans'),local('OpenSans-Normal'),url(//lib.baomitu.com/fonts/open-sans/open-sans-regular.eot?#iefix) format('embedded-opentype'),url(//lib.baomitu.com/fonts/open-sans/open-sans-regular.woff2) format('woff2'),url(//lib.baomitu.com/fonts/open-sans/open-sans-regular.woff) format('woff'),url(//lib.baomitu.com/fonts/open-sans/open-sans-regular.ttf) format('truetype'),url(//lib.baomitu.com/fonts/open-sans/open-sans-regular.svg#OpenSans) format('svg')}@font-face{font-family:'Open Sans';font-style:normal;font-weight:300;src:url(//lib.baomitu.com/fonts/open-sans/open-sans-300.eot);src:local('Open Sans'),local('OpenSans-Normal'),url(//lib.baomitu.com/fonts/open-sans/open-sans-300.eot?#iefix) format('embedded-opentype'),url(//lib.baomitu.com/fonts/open-sans/open-sans-300.woff2) format('woff2'),url(//lib.baomitu.com/fonts/open-sans/open-sans-300.woff) format('woff'),url(//lib.baomitu.com/fonts/open-sans/open-sans-300.ttf) format('truetype'),url(//lib.baomitu.com/fonts/open-sans/open-sans-300.svg#OpenSans) format('svg')}@font-face{font-family:'Open Sans';font-style:normal;font-weight:600;src:url(//lib.baomitu.com/fonts/open-sans/open-sans-600.eot);src:local('Open Sans'),local('OpenSans-Normal'),url(//lib.baomitu.com/fonts/open-sans/open-sans-600.eot?#iefix) format('embedded-opentype'),url(//lib.baomitu.com/fonts/open-sans/open-sans-600.woff2) format('woff2'),url(//lib.baomitu.com/fonts/open-sans/open-sans-600.woff) format('woff'),url(//lib.baomitu.com/fonts/open-sans/open-sans-600.ttf) format('truetype'),url(//lib.baomitu.com/fonts/open-sans/open-sans-600.svg#OpenSans) format('svg')}@font-face{font-family:'Open Sans';font-style:normal;font-weight:700;src:url(//lib.baomitu.com/fonts/open-sans/open-sans-700.eot);src:local('Open Sans'),local('OpenSans-Normal'),url(//lib.baomitu.com/fonts/open-sans/open-sans-700.eot?#iefix) format('embedded-opentype'),url(//lib.baomitu.com/fonts/open-sans/open-sans-700.woff2) format('woff2'),url(//lib.baomitu.com/fonts/open-sans/open-sans-700.woff) format('woff'),url(//lib.baomitu.com/fonts/open-sans/open-sans-700.ttf) format('truetype'),url(//lib.baomitu.com/fonts/open-sans/open-sans-700.svg#OpenSans) format('svg')}@font-face{font-family:'Open Sans';font-style:normal;font-weight:800;src:url(//lib.baomitu.com/fonts/open-sans/open-sans-800.eot);src:local('Open Sans'),local('OpenSans-Normal'),url(//lib.baomitu.com/fonts/open-sans/open-sans-800.eot?#iefix) format('embedded-opentype'),url(//lib.baomitu.com/fonts/open-sans/open-sans-800.woff2) format('woff2'),url(//lib.baomitu.com/fonts/open-sans/open-sans-800.woff) format('woff'),url(//lib.baomitu.com/fonts/open-sans/open-sans-800.ttf) format('truetype'),url(//lib.baomitu.com/fonts/open-sans/open-sans-800.svg#OpenSans) format('svg')}
+    </style>
+    <!-- <link href="//fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" rel="stylesheet" type="text/css"> -->
+    <!-- <link href="//fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css"> -->
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- Gallery -->
+    <!-- <link href="//cdn.rawgit.com/noelboss/featherlight/1.3.5/release/featherlight.min.css" type="text/css" rel="stylesheet" /> -->
+    <link href="//lib.baomitu.com/featherlight/1.3.5/featherlight.min.css" rel="stylesheet">
+
+    <!-- Google Analytics -->
+    
+    <script>
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+                    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+                m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+        ga('create', 'UA-63590316-1', 'auto');
+        ga('send', 'pageview');
+
+    </script>
+
+
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+
+    <!-- Menu -->
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">DesignBytes</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav navbar-right">
+                
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+                
+                    <li>
+                        <a href="/archives">Archives</a>
+                    </li>
+                
+            </ul>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+
+    <!-- Main Content -->
+    <!-- Page Header -->
+<!-- Set your background image for this header in your post front-matter: cover -->
+
+<header class="intro-header" style="background-image: url('https://images.unsplash.com/photo-1452716726610-30ed68426a6b?ixlib=rb-0.3.5&q=80&fm=jpg&crop=entropy&s=eb13d4961a078aca65cfa493a8026519')">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <h1>第一个 vscode 插件</h1>
+                    
+                    <span class="meta">
+                        <!-- Date and Author -->
+                        
+                            Posted by nepaul on
+                        
+                        2017-02-08
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+            <!-- Tags and categories -->
+           
+                <div class="col-lg-4 col-lg-offset-2 col-md-5 col-md-offset-1 post-tags">
+                    
+                        
+
+
+<a href="/tags/tools/">#tools</a>
+
+
+                    
+                </div>
+                <div class="col-lg-4 col-md-5 post-categories">
+                    
+                </div>
+            
+
+            <!-- Gallery -->
+            
+
+            <!-- Post Main Content -->
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <p>VSCode，即  <a target="_blank" rel="noopener" href="https://code.visualstudio.com/">Visual Studio Code</a> ，是 微软 的一个开源编辑器。快速、稳定，内置调试、git ，并且有类似 atom 和 sublime 的插件扩展机制。现在我基本以此来作为 Web 开发的编辑器，强烈推荐给大家。</p>
+<h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>每次新建一个项目免不了配置 <code>.editorconfig</code>文件（可以从 <a target="_blank" rel="noopener" href="http://editorconfig.org/">官网</a> 进一步了解 editorconfig ），里面的内容大同小异。<br>每次手工配置很麻烦，想通过一个命令智能生成常规的 <code>.editorconfig</code>文件，内容大致如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"># http://editorconfig.org</span><br><span class="line">root = true</span><br><span class="line"></span><br><span class="line">[*]</span><br><span class="line">indent_style = space</span><br><span class="line">indent_size = 2</span><br><span class="line">end_of_line = lf</span><br><span class="line">charset = utf-8</span><br><span class="line">trim_trailing_whitespace = true</span><br><span class="line">insert_final_newline = true</span><br><span class="line"></span><br><span class="line">[*.md]</span><br><span class="line">trim_trailing_whitespace = false</span><br></pre></td></tr></table></figure>
+<p>搜索了 Extensions Marketplace，发现有一个 <a target="_blank" rel="noopener" href="https://marketplace.visualstudio.com/items?itemName=EditorConfig.EditorConfig">EditorConfig for VS Code</a>插件功能类似，但是生成的文件内容还是不满足我的项目常用配置（内容如下）</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">root = true</span><br><span class="line"></span><br><span class="line">[*]</span><br><span class="line">indent_style = space</span><br><span class="line">indent_size = 2</span><br></pre></td></tr></table></figure>
+<p>索性自己写一个！</p>
+<h2 id="前期准备"><a href="#前期准备" class="headerlink" title="前期准备"></a>前期准备</h2><ol>
+<li>注册一个 <a target="_blank" rel="noopener" href="https://go.microsoft.com/fwlink/?LinkId=307137">Visual Studio Team Services</a> 的帐号，以便后续编写以及发布插件到 <a target="_blank" rel="noopener" href="https://marketplace.visualstudio.com/">Marketplace</a> （ <a target="_blank" rel="noopener" href="https://www.visualstudio.com/en-us/docs/setup-admin/team-services/sign-up-for-visual-studio-team-services#MicrosoftAccount">详细步骤</a> ）。</li>
+<li>步骤1 中的帐号主页中添加一个 Personal Access Token （ <a target="_blank" rel="noopener" href="https://code.visualstudio.com/docs/tools/vscecli#_get-a-personal-access-token">详细步骤</a> ）</li>
+<li>安装 发布工具 <strong>vsce</strong>：<code>npm install -g vsce</code>（当然这需要 NodeJS 环境）。</li>
+<li>创建一个发布者：<code>vsce create-publisher (your publisher name)</code>，交互过程中会需要输入 <strong>步骤2</strong> 中生成的 Token。vsce 会记录该 Token。</li>
+<li>安装 <a target="_blank" rel="noopener" href="https://code.visualstudio.com/docs/tools/yocode">yocode</a> ：<code>npm install -g yo generator-code</code>。可以通过 Yo Code 这个工具快速生成一个插件工程。</li>
+</ol>
+<h2 id="编码及发布"><a href="#编码及发布" class="headerlink" title="编码及发布"></a>编码及发布</h2><blockquote>
+<p>:v:插件的代码已经发布到 <a target="_blank" rel="noopener" href="https://github.com/nepaul/editorconfig-generator">github</a> :v:</p>
+</blockquote>
+<p>生成一个 插件工程：<code>yo code</code>，会有一些交互，基本默认就好。<br>主要关注 <code>package.json</code> 和 <code>extension.js</code>这两个文件，前者主要是插件的基本配置，后者是插件代码的入口主文件。</p>
+<h3 id="package-json"><a href="#package-json" class="headerlink" title="package.json"></a>package.json</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    &quot;name&quot;: &quot;editorconfiggenerator&quot;,</span><br><span class="line">    &quot;activationEvents&quot;: [</span><br><span class="line">        &quot;onCommand:extension.generateEditorConfig&quot;</span><br><span class="line">    ],</span><br><span class="line">    &quot;main&quot;: &quot;./src/extension&quot;,</span><br><span class="line">    &quot;contributes&quot;: &#123;</span><br><span class="line">        &quot;commands&quot;: [</span><br><span class="line">            &#123;</span><br><span class="line">                &quot;command&quot;: &quot;extension.generateEditorConfig&quot;,</span><br><span class="line">                &quot;title&quot;: &quot;GenerateEditorConfig&quot;</span><br><span class="line">            &#125;</span><br><span class="line">        ]</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>extension.generateEditorConfig</code>：代码中注册的触发事件，command 相关的字段中必须统一<br><code>GenerateEditorConfig </code> （commands -&gt; title 字段值）：shift + cmd + p 调出的命令行中输入的值。</p>
+<h3 id="发布"><a href="#发布" class="headerlink" title="发布"></a>发布</h3><p>发布前建议好好书写 README.md 文件，以让用户知道这个插件的作用和使用方法。<br>发布的命令很简单：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cd your-extension-project-directory</span><br><span class="line">vsce publish 语义化版本号</span><br></pre></td></tr></table></figure>
+<p>不了解<strong>语义化版本号</strong>的同学可以看 <a target="_blank" rel="noopener" href="http://semver.org/">官网资料</a><br>vsce 提供了自动增加的版本号机制：major，minor，patch，例如： <code>vsce publish major</code></p>
+<p>另外，我的插件 <a target="_blank" rel="noopener" href="https://marketplace.visualstudio.com/items?itemName=nepaul.editorconfiggenerator">EditorConfigGenerator</a> 已经发布了，欢迎使用。 </p>
+<h2 id="参考文档"><a href="#参考文档" class="headerlink" title="参考文档"></a>参考文档</h2><ol>
+<li><a target="_blank" rel="noopener" href="https://code.visualstudio.com/docs/extensions/overview">基本介绍及教程</a></li>
+<li><a target="_blank" rel="noopener" href="https://code.visualstudio.com/docs/extensionAPI/overview">API 文档</a></li>
+<li><a target="_blank" rel="noopener" href="https://code.visualstudio.com/docs/tools/vscecli">辅助工具</a></li>
+</ol>
+
+            </div>
+
+            <!-- Comments -->
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                
+    <hr />
+    <h3>Comments:</h3>
+    <div id="disqus_thread">
+        <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    </div>
+
+
+
+            </div>
+        </div>
+    </div>
+</article>
+
+    <!-- Footer -->
+    <hr />
+
+<!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                    <li>
+                        <a href="https://github.com/nepaul" target="_blank">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                    <!-- <li>
+                        <a href="https://twitter.com/xsnepaul" target="_blank">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://medium.com/@nepaul" target="_blank">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-medium fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li> -->
+                </ul>
+                <p class="copyright text-muted">      &copy; 2023 nepaul&nbsp;
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>, theme by <a target="_blank" rel="noopener" href="https://github.com/klugjo/hexo-theme-clean-blog">Clean Blog</a></p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+
+    <!-- After footer scripts -->
+    
+<!-- jQuery -->
+<!-- 
+<script src="/js/jquery.min.js"></script>
+ -->
+<script src="//lib.baomitu.com/jquery/2.2.4/jquery.min.js"></script>
+
+<!-- Bootstrap -->
+<!-- 
+<script src="/bootstrap/js/bootstrap.min.js"></script>
+ -->
+<script src="//lib.baomitu.com/twitter-bootstrap/3.3.6/js/bootstrap.min.js"></script>
+
+<!-- Gallery -->
+<!-- <script src="//cdn.rawgit.com/noelboss/featherlight/1.3.5/release/featherlight.min.js" type="text/javascript" charset="utf-8"></script> -->
+<script src="//lib.baomitu.com/featherlight/1.3.5/featherlight.min.js"></script>
+
+<!-- Disqus Comments -->
+
+<script type="text/javascript">
+    var disqus_shortname = '';
+
+    (function(){
+        var dsq = document.createElement('script');
+        dsq.type = 'text/javascript';
+        dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+</body>
+
+</html>

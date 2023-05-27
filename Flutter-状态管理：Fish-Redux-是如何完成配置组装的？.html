@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!--Description-->
+    
+        <meta name="description" content="备注：本文首发于「百瓶技术」公众号
+
+
+「百瓶 App」（各市场搜索「百瓶」体验 🥳）在 2019 年 11 月开始接入 Flutter 时，就选定了闲鱼的 Fish Redux 作为状态管理方案。经过近两年的迭代，已经完成了 80 个以上的 Page 级功能，积累了丰富的使用经验。虽然 GitH">
+    
+
+    <!--Author-->
+    
+        <meta name="author" content="nepaul">
+    
+
+    <!--Open Graph Title-->
+    
+        <meta property="og:title" content="Flutter 状态管理：Fish Redux 是如何完成配置组装的？"/>
+    
+
+    <!--Open Graph Site Name-->
+    <meta property="og:site_name" content="DesignBytes"/>
+
+    <!--Page Cover-->
+    
+        <meta property="og:image" content=""/>
+    
+
+    
+        <link rel="icon" href="favicon/favicon.ico">
+    
+    <!-- Title -->
+    
+    <title>Flutter 状态管理：Fish Redux 是如何完成配置组装的？ - DesignBytes</title>
+
+    <!-- Bootstrap Core CSS -->
+    <!-- 
+<link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css">
+ -->
+    <link href="//lib.baomitu.com/twitter-bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+
+    <!-- Custom Fonts -->
+    <link href="//lib.baomitu.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <style>
+        @font-face{font-family:Lora;font-style:normal;font-weight:regular;src:url(//lib.baomitu.com/fonts/lora/lora-regular.eot);src:local('Lora'),local('Lora-Normal'),url(//lib.baomitu.com/fonts/lora/lora-regular.eot?#iefix) format('embedded-opentype'),url(//lib.baomitu.com/fonts/lora/lora-regular.woff2) format('woff2'),url(//lib.baomitu.com/fonts/lora/lora-regular.woff) format('woff'),url(//lib.baomitu.com/fonts/lora/lora-regular.ttf) format('truetype'),url(//lib.baomitu.com/fonts/lora/lora-regular.svg#Lora) format('svg')}@font-face{font-family:Lora;font-style:normal;font-weight:700;src:url(//lib.baomitu.com/fonts/lora/lora-700.eot);src:local('Lora'),local('Lora-Normal'),url(//lib.baomitu.com/fonts/lora/lora-700.eot?#iefix) format('embedded-opentype'),url(//lib.baomitu.com/fonts/lora/lora-700.woff2) format('woff2'),url(//lib.baomitu.com/fonts/lora/lora-700.woff) format('woff'),url(//lib.baomitu.com/fonts/lora/lora-700.ttf) format('truetype'),url(//lib.baomitu.com/fonts/lora/lora-700.svg#Lora) format('svg')}@font-face{font-family:Lora;font-style:italic;font-weight:regular;src:url(//lib.baomitu.com/fonts/lora/lora-italic.eot);src:local('Lora'),local('Lora-Italic'),url(//lib.baomitu.com/fonts/lora/lora-italic.eot?#iefix) format('embedded-opentype'),url(//lib.baomitu.com/fonts/lora/lora-italic.woff2) format('woff2'),url(//lib.baomitu.com/fonts/lora/lora-italic.woff) format('woff'),url(//lib.baomitu.com/fonts/lora/lora-italic.ttf) format('truetype'),url(//lib.baomitu.com/fonts/lora/lora-italic.svg#Lora) format('svg')}@font-face{font-family:Lora;font-style:italic;font-weight:700;src:url(//lib.baomitu.com/fonts/lora/lora-700italic.eot);src:local('Lora'),local('Lora-Italic'),url(//lib.baomitu.com/fonts/lora/lora-700italic.eot?#iefix) format('embedded-opentype'),url(//lib.baomitu.com/fonts/lora/lora-700italic.woff2) format('woff2'),url(//lib.baomitu.com/fonts/lora/lora-700italic.woff) format('woff'),url(//lib.baomitu.com/fonts/lora/lora-700italic.ttf) format('truetype'),url(//lib.baomitu.com/fonts/lora/lora-700italic.svg#Lora) format('svg')}@font-face{font-family:'Open Sans';font-style:italic;font-weight:300;src:url(//lib.baomitu.com/fonts/open-sans/open-sans-300italic.eot);src:local('Open Sans'),local('OpenSans-Italic'),url(//lib.baomitu.com/fonts/open-sans/open-sans-300italic.eot?#iefix) format('embedded-opentype'),url(//lib.baomitu.com/fonts/open-sans/open-sans-300italic.woff2) format('woff2'),url(//lib.baomitu.com/fonts/open-sans/open-sans-300italic.woff) format('woff'),url(//lib.baomitu.com/fonts/open-sans/open-sans-300italic.ttf) format('truetype'),url(//lib.baomitu.com/fonts/open-sans/open-sans-300italic.svg#OpenSans) format('svg')}@font-face{font-family:'Open Sans';font-style:italic;font-weight:regular;src:url(//lib.baomitu.com/fonts/open-sans/open-sans-italic.eot);src:local('Open Sans'),local('OpenSans-Italic'),url(//lib.baomitu.com/fonts/open-sans/open-sans-italic.eot?#iefix) format('embedded-opentype'),url(//lib.baomitu.com/fonts/open-sans/open-sans-italic.woff2) format('woff2'),url(//lib.baomitu.com/fonts/open-sans/open-sans-italic.woff) format('woff'),url(//lib.baomitu.com/fonts/open-sans/open-sans-italic.ttf) format('truetype'),url(//lib.baomitu.com/fonts/open-sans/open-sans-italic.svg#OpenSans) format('svg')}@font-face{font-family:'Open Sans';font-style:italic;font-weight:600;src:url(//lib.baomitu.com/fonts/open-sans/open-sans-600italic.eot);src:local('Open Sans'),local('OpenSans-Italic'),url(//lib.baomitu.com/fonts/open-sans/open-sans-600italic.eot?#iefix) format('embedded-opentype'),url(//lib.baomitu.com/fonts/open-sans/open-sans-600italic.woff2) format('woff2'),url(//lib.baomitu.com/fonts/open-sans/open-sans-600italic.woff) format('woff'),url(//lib.baomitu.com/fonts/open-sans/open-sans-600italic.ttf) format('truetype'),url(//lib.baomitu.com/fonts/open-sans/open-sans-600italic.svg#OpenSans) format('svg')}@font-face{font-family:'Open Sans';font-style:italic;font-weight:700;src:url(//lib.baomitu.com/fonts/open-sans/open-sans-700italic.eot);src:local('Open Sans'),local('OpenSans-Italic'),url(//lib.baomitu.com/fonts/open-sans/open-sans-700italic.eot?#iefix) format('embedded-opentype'),url(//lib.baomitu.com/fonts/open-sans/open-sans-700italic.woff2) format('woff2'),url(//lib.baomitu.com/fonts/open-sans/open-sans-700italic.woff) format('woff'),url(//lib.baomitu.com/fonts/open-sans/open-sans-700italic.ttf) format('truetype'),url(//lib.baomitu.com/fonts/open-sans/open-sans-700italic.svg#OpenSans) format('svg')}@font-face{font-family:'Open Sans';font-style:italic;font-weight:800;src:url(//lib.baomitu.com/fonts/open-sans/open-sans-800italic.eot);src:local('Open Sans'),local('OpenSans-Italic'),url(//lib.baomitu.com/fonts/open-sans/open-sans-800italic.eot?#iefix) format('embedded-opentype'),url(//lib.baomitu.com/fonts/open-sans/open-sans-800italic.woff2) format('woff2'),url(//lib.baomitu.com/fonts/open-sans/open-sans-800italic.woff) format('woff'),url(//lib.baomitu.com/fonts/open-sans/open-sans-800italic.ttf) format('truetype'),url(//lib.baomitu.com/fonts/open-sans/open-sans-800italic.svg#OpenSans) format('svg')}@font-face{font-family:'Open Sans';font-style:normal;font-weight:regular;src:url(//lib.baomitu.com/fonts/open-sans/open-sans-regular.eot);src:local('Open Sans'),local('OpenSans-Normal'),url(//lib.baomitu.com/fonts/open-sans/open-sans-regular.eot?#iefix) format('embedded-opentype'),url(//lib.baomitu.com/fonts/open-sans/open-sans-regular.woff2) format('woff2'),url(//lib.baomitu.com/fonts/open-sans/open-sans-regular.woff) format('woff'),url(//lib.baomitu.com/fonts/open-sans/open-sans-regular.ttf) format('truetype'),url(//lib.baomitu.com/fonts/open-sans/open-sans-regular.svg#OpenSans) format('svg')}@font-face{font-family:'Open Sans';font-style:normal;font-weight:300;src:url(//lib.baomitu.com/fonts/open-sans/open-sans-300.eot);src:local('Open Sans'),local('OpenSans-Normal'),url(//lib.baomitu.com/fonts/open-sans/open-sans-300.eot?#iefix) format('embedded-opentype'),url(//lib.baomitu.com/fonts/open-sans/open-sans-300.woff2) format('woff2'),url(//lib.baomitu.com/fonts/open-sans/open-sans-300.woff) format('woff'),url(//lib.baomitu.com/fonts/open-sans/open-sans-300.ttf) format('truetype'),url(//lib.baomitu.com/fonts/open-sans/open-sans-300.svg#OpenSans) format('svg')}@font-face{font-family:'Open Sans';font-style:normal;font-weight:600;src:url(//lib.baomitu.com/fonts/open-sans/open-sans-600.eot);src:local('Open Sans'),local('OpenSans-Normal'),url(//lib.baomitu.com/fonts/open-sans/open-sans-600.eot?#iefix) format('embedded-opentype'),url(//lib.baomitu.com/fonts/open-sans/open-sans-600.woff2) format('woff2'),url(//lib.baomitu.com/fonts/open-sans/open-sans-600.woff) format('woff'),url(//lib.baomitu.com/fonts/open-sans/open-sans-600.ttf) format('truetype'),url(//lib.baomitu.com/fonts/open-sans/open-sans-600.svg#OpenSans) format('svg')}@font-face{font-family:'Open Sans';font-style:normal;font-weight:700;src:url(//lib.baomitu.com/fonts/open-sans/open-sans-700.eot);src:local('Open Sans'),local('OpenSans-Normal'),url(//lib.baomitu.com/fonts/open-sans/open-sans-700.eot?#iefix) format('embedded-opentype'),url(//lib.baomitu.com/fonts/open-sans/open-sans-700.woff2) format('woff2'),url(//lib.baomitu.com/fonts/open-sans/open-sans-700.woff) format('woff'),url(//lib.baomitu.com/fonts/open-sans/open-sans-700.ttf) format('truetype'),url(//lib.baomitu.com/fonts/open-sans/open-sans-700.svg#OpenSans) format('svg')}@font-face{font-family:'Open Sans';font-style:normal;font-weight:800;src:url(//lib.baomitu.com/fonts/open-sans/open-sans-800.eot);src:local('Open Sans'),local('OpenSans-Normal'),url(//lib.baomitu.com/fonts/open-sans/open-sans-800.eot?#iefix) format('embedded-opentype'),url(//lib.baomitu.com/fonts/open-sans/open-sans-800.woff2) format('woff2'),url(//lib.baomitu.com/fonts/open-sans/open-sans-800.woff) format('woff'),url(//lib.baomitu.com/fonts/open-sans/open-sans-800.ttf) format('truetype'),url(//lib.baomitu.com/fonts/open-sans/open-sans-800.svg#OpenSans) format('svg')}
+    </style>
+    <!-- <link href="//fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" rel="stylesheet" type="text/css"> -->
+    <!-- <link href="//fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css"> -->
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- Gallery -->
+    <!-- <link href="//cdn.rawgit.com/noelboss/featherlight/1.3.5/release/featherlight.min.css" type="text/css" rel="stylesheet" /> -->
+    <link href="//lib.baomitu.com/featherlight/1.3.5/featherlight.min.css" rel="stylesheet">
+
+    <!-- Google Analytics -->
+    
+    <script>
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+                    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+                m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+        ga('create', 'UA-63590316-1', 'auto');
+        ga('send', 'pageview');
+
+    </script>
+
+
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+
+    <!-- Menu -->
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">DesignBytes</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav navbar-right">
+                
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+                
+                    <li>
+                        <a href="/archives">Archives</a>
+                    </li>
+                
+            </ul>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+
+    <!-- Main Content -->
+    <!-- Page Header -->
+<!-- Set your background image for this header in your post front-matter: cover -->
+
+<header class="intro-header" style="background-image: url('https://images.unsplash.com/photo-1452716726610-30ed68426a6b?ixlib=rb-0.3.5&q=80&fm=jpg&crop=entropy&s=eb13d4961a078aca65cfa493a8026519')">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <h1>Flutter 状态管理：Fish Redux 是如何完成配置组装的？</h1>
+                    
+                    <span class="meta">
+                        <!-- Date and Author -->
+                        
+                            Posted by nepaul on
+                        
+                        2021-11-22
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+            <!-- Tags and categories -->
+           
+                <div class="col-lg-4 col-lg-offset-2 col-md-5 col-md-offset-1 post-tags">
+                    
+                        
+
+
+<a href="/tags/Flutter/">#Flutter</a>
+
+
+                    
+                </div>
+                <div class="col-lg-4 col-md-5 post-categories">
+                    
+                </div>
+            
+
+            <!-- Gallery -->
+            
+
+            <!-- Post Main Content -->
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <blockquote>
+<p>备注：本文首发于「百瓶技术」公众号</p>
+</blockquote>
+<p><img src="/images/fish-redux-configuration/cover.jpg" alt="cover"></p>
+<p>「百瓶 App」（各市场搜索「百瓶」体验 🥳）在 2019 年 11 月开始接入 Flutter 时，就选定了闲鱼的 Fish Redux 作为状态管理方案。经过近两年的迭代，已经完成了 80 个以上的 Page 级功能，积累了丰富的使用经验。虽然 <a target="_blank" rel="noopener" href="https://github.com/alibaba/fish-redux">GitHub</a>[^2]  迭代更新较少，但是它在 2021-05-18 对外宣布正在进行 「<a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/8vFDLq3WaeImyQNb--8ZyQ">2.0 架构的演进</a>[^3]」以及最近释放的 「<a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/YYyU2yoM61VuApz9FsUxQw">Flutter Fish_Redux 3.0起航！</a>[^10]」，说明内部还是坚持在业务中使用并且对框架进行持续优化的。</p>
+<blockquote>
+<p>本文主要阐述 Fish Redux 两大方面的知识：</p>
+<ol>
+<li>简单介绍核心概念以及基于 Fish Redux[^2] 的「最佳」研发流程；</li>
+<li>深入剖析<strong>配置式组装</strong>。</li>
+</ol>
+<p><em>（备注：1. 阅读本文需要对 Flutter(v1.17.1) 和 Fish Redux(v0.3.7)（或者 Redux[^1]）有简单的了解；2. 文中的很多概念，比如 Redux、Fish Redux 等的详细介绍链接都会统一放到文末「参考」部分）。</em></p>
+</blockquote>
+<h2 id="核心概念"><a href="#核心概念" class="headerlink" title="核心概念"></a>核心概念</h2><ul>
+<li>顾名思义：源自 阿里巴巴闲鱼（Fish）技术团队，站在巨人 Redux 的肩膀上，比如 State、Action、Reducer、Store、Middleware 等概念和 Redux 完全一致。</li>
+<li>青出于蓝：解决了 Redux「集中」 和「分治」间的矛盾，并且由框架自动完成从细粒度的 Reducer 到 主 Reducer 的合并过程。</li>
+<li>组件三要素：<code>Component = View + Effect(可选) + Reducer(可选) + Dependencies(可选)</code>：<ul>
+<li>View（UI 视图）：完全由数据驱动，负责 Dispatch 事件（Effect 和 Reducer 具体实现），组件依赖通过 <code>ViewService</code> 标准化调用；</li>
+<li>Effect：处理 副作用（非修改数据的行为，包括<strong>生命周期</strong>相关的回调）；</li>
+<li>Reducer：修改数据，并以扁平化的方式通知组件刷新；</li>
+<li>Dependencies：表达组件之间的依赖关系。</li>
+</ul>
+</li>
+</ul>
+<h2 id="「最佳」研发流程"><a href="#「最佳」研发流程" class="headerlink" title="「最佳」研发流程"></a>「最佳」研发流程</h2><blockquote>
+<p>假设需要完成下图 UI 的页面研发，ProtocolBuffer[^4]（没接触过的直接理解为 API 文档即可）也已经设计完毕。</p>
+<p>那么，基于 Fish Redux 的最佳研发流程是怎么样的？</p>
+</blockquote>
+<p><img src="/images/fish-redux-configuration/UserHomePage-UI.jpg" alt="UserHomePage UI"></p>
+<p>简单<strong>三步</strong>完成复杂页面的协同研发：</p>
+<ul>
+<li><strong>首先，进行组件拆分</strong>：拆分为五个大的组件（如图框所示，红 - profiles_component、绿 - malls_components、黄 - wallets_component、紫 - banners_component、蓝 - tools_component）。由于 Fish Redux 良好的分治策略，这时候完全可以分配给五个同学分别去完成单组件的开发（<em>此时整个页面的目录结构如下图</em>）。<br><img src="/images/fish-redux-configuration/code-struct-user-home-page.png" alt="Code Structure UserHomePage"></li>
+<li><strong>其次，五位同学进行单组件的开发（以 蓝 - tools_component 为例）</strong>：<ul>
+<li><code>state.dart</code>：结合 ProtocolBuffer[^4] 和 UI ，定义 State 结构；</li>
+<li><code>reducer.dart</code> 和 <code>action.dart</code>：分析 state 的哪些数据会被改变，定义好相应的 Action 和 Reducer；</li>
+<li><code>effect.dart</code> 和 <code>action.dart</code>：分析有哪些 副作用 事件响应（比如 请求数据、页面跳转等），定义好相应的 Action 和 Effect；</li>
+<li><code>view.dart</code>：视图实现；</li>
+<li><code>component.dart</code>：配置组装，这一步通常由 插件[^6] 自动生成了，当然 「最佳实践」 建议删除没有用到的模块（比如很多组件的 <code>dependencies</code>）。</li>
+</ul>
+</li>
+<li><strong>最后，Page 级组装（后文会结合源码深入剖析）</strong>：<ul>
+<li><code>user_home_page/state.dart</code>：1. 以子组件的 State（比如 <code>ProfilesState</code> 和 <code>ToolsState</code>）为核心定义 State；2. 建立 State 的 Connector。</li>
+<li><code>user_home_page/page.dart</code>：配置组装整个页面。</li>
+</ul>
+</li>
+</ul>
+<h2 id="配置组装"><a href="#配置组装" class="headerlink" title="配置组装"></a>配置组装</h2><blockquote>
+<p>Fish Redux 通过 声明式配置 来将三大核心要素（View、Reducer、Effect）和依赖的子项 dependencies（子组件、middleware、adapter）完成自动组装。<br>而且大部分代码都可以通过编辑器的 插件[^6] 自动生成，唯一需要手动编写的就是 <code>dependencies</code> 部分。这是非常重要的一个优点，但是业内讲得比较少。<br>备注：配置组装的代码跟 <a target="_blank" rel="noopener" href="https://github.com/alibaba/fish-redux/tree/master/example">FishRedux Example</a> 基本一致，可以查看相关代码 [^5] 加深理解。</p>
+</blockquote>
+<p>接下去，将重点阐述配置组装的两个最核心的流程：注册 和 首次页面渲染。</p>
+<h3 id="注册"><a href="#注册" class="headerlink" title="注册"></a>注册</h3><p>一句代码完成用户中心页面的注册。<br><img src="/images/fish-redux-configuration/code-snippet-page-create-store.png" alt="code-snippet-register-page"></p>
+<p><code>connecrtExtraStore</code> 主要是完成一些全局状态的链接，重点看一下 <code>UserHomePage()</code> 部分。</p>
+<p><img src="/images/fish-redux-configuration/code-snippet-page-code.png" alt="code-snippet-page-code"></p>
+<h4 id="UserHomePage-「类图」"><a href="#UserHomePage-「类图」" class="headerlink" title="UserHomePage() 「类图」"></a><code>UserHomePage()</code> 「类图」</h4><ul>
+<li><code>UserHomePage</code>：本身不需要新增任何属性或方法，按照固定范式调用 超类 相关方法完成 「页面级」 的组装，并且在注册时对应一个唯一路由。</li>
+<li><code>fish_redux Page()</code>：<ul>
+<li><code>InitState&lt;T, P&gt; _initState</code>：页面初始状态，也是 Page 特有且必要的属性。</li>
+<li><code>Widget buildPage(P param)</code>：初次页面渲染调用（后文会详细阐述）。</li>
+</ul>
+</li>
+<li><code>fish_redux Component</code>：<ul>
+<li><code>ViewBuilder&lt;T&gt; _view</code>：维护 View 层（<code>buildView</code> 属性）。</li>
+</ul>
+</li>
+<li><code>fish_redux Logic</code>：维护 reducer、 effect、 dependencies（所有的依赖子组建）等属性，核心逻辑处理。</li>
+</ul>
+<p><img src="/images/fish-redux-configuration/UML/class-diagram-userhome-page.png" alt="UML class-diagram-userhome-page"></p>
+<h4 id="dependencies"><a href="#dependencies" class="headerlink" title="dependencies"></a>dependencies</h4><blockquote>
+<p><code>dependencies</code> 接受两个参数（代码见上文图）：</p>
+<ol>
+<li><code>adapter</code>：为了解决 list 相关的性能问题，list 相关组件推荐使用；</li>
+<li><code>slots</code>：页面（或组件）依赖的子组件，这是我们重点要理解的部分。</li>
+</ol>
+</blockquote>
+<p><strong><code>UHPComponentNames.tools: ToolsConnector() + ToolsComponent()</code></strong></p>
+<ul>
+<li><code>UHPComponentNames.tools</code>：依赖的名字，<code>String</code> 类型表明（最佳实践建议提成一个常量，而不是直接用一个 String）。</li>
+<li><code>ToolsConnector()</code>：Tools 自己管理 State，通过 ToolsConnector 与 Page State 建立链接，Page State 完全不关心 toolsState 具体有哪些属性（高内聚低耦合）！<br><img src="/images/fish-redux-configuration/code-snippet-tools-component-state-connector.png" alt="code-snippet-tools-component-state-connector"></li>
+<li><code>ToolsComponent()</code>：继承自 <code>Component</code>，除了没有 <code>InitState</code> 和 <code>middleware</code> 相关（包括 <code>viewMiddleware</code>、<code>effectMiddleware</code> 和 <code>adapterMiddleware</code>），其他跟 Page 的组装没有差异。</li>
+<li><code>ToolsConnector() +</code>：追溯到 <code>ConnOp</code> 的 mixins - <code>ConnOpMixin</code> 里重载了 「加号」，最终创建了一个  <code>_Dependent</code>(<a target="_blank" rel="noopener" href="https://github.com/alibaba/fish-redux/blob/master/lib/src/redux_component/dependent.dart">redux_component&#x2F;dependent.dart</a>[^2])  实例（<code>_Dependent&lt;K, T&gt;(connector: connector, logic: logic)</code>）。</li>
+</ul>
+<p><strong><code>_Dependent</code> 的实例化</strong>，核心是创建生成 <code>subReducer = connector.subReducer(logic.createReducer())</code> <em>（下文「createReducer」相关章节会详细阐述 reducer 的创建过程）</em>：<br><img src="/images/fish-redux-configuration/code-snippet-_Dependent-class-construction-code.png" alt="code-snippet-_Dependent-class-construction-code"></p>
+<ol>
+<li><code>logic.createReducer()</code>：最终调用 <code>abstract class Logic</code> 的 <code>createReducer</code> 完成 自身 和 子组件 的 reducer 组合；</li>
+<li><code>connector.subReducer(logic.createReducer())</code>：copy 返回一个新的 Reducer。</li>
+</ol>
+<p>至此，Page 基于 state、effect、reducer、view 以及 dependencies 完成了实例化的整个过程。</p>
+<h3 id="首次页面渲染"><a href="#首次页面渲染" class="headerlink" title="首次页面渲染"></a>首次页面渲染</h3><p>当我们打开 <code>UserHomePage</code> 时，会执行如下 <code>routes.buildPage</code>（即 类 <code>Page</code> 的 <code>buildPage</code> 方法），接受两个参数分别为 路由名和传入该页面的参数：<br><img src="/images/fish-redux-configuration/code-snippet-open-page-build-page.png" alt="code-snippet-open-page-build-page"></p>
+<h4 id="Class-Page-Method-buildPage"><a href="#Class-Page-Method-buildPage" class="headerlink" title="Class Page - Method  buildPage"></a>Class Page - Method  buildPage</h4><p><img src="/images/fish-redux-configuration/code-snippet-page-class-build-page-method.png" alt="code-snippet-page-class-build-page-method"></p>
+<ul>
+<li><code>protectedWrapper</code>: 默认返回 <code>_PageWidget</code>, 也支持自定义的包装（<code>UserHomePage</code> 中传入属性 <code>wrapper</code> ，用的较少不必过多关注）。</li>
+<li>❗️<code>_PageWidget</code>: 本质上是一个 <code>StatefulWidget</code>[^8]，页面渲染的<strong>最核心部分</strong>。</li>
+<li>💡 Lifecycle：Fish Redux 中默认的所有生命周期本质上来源于 Flutter Stateful Widget 的生命周期，Reducer 的生命周期和页面是一致的（<code>initState</code> -&gt; <code>didChangeDependencies</code> -&gt; <code>build</code>……）。</li>
+</ul>
+<h4 id="PageWidget"><a href="#PageWidget" class="headerlink" title="_PageWidget"></a>_PageWidget</h4><p><strong>重点看一下 <code>_PageWidget()</code> 的整个流程（核心要素类图）：</strong><br><img src="/images/fish-redux-configuration/UML/class-diagram-page-widget.png" alt="class-diagram-page-widget"></p>
+<p><strong><code>_PageWidget()</code> 中 <code>initState()</code> 和 <code>build()</code> 相关的执行过程：</strong><br><img src="/images/fish-redux-configuration/UML/sequence-diagram-build-page.png" alt="sequence-diagram-build-page"></p>
+<h5 id="PageWidget-initState-中最重要的-createStore-的操作："><a href="#PageWidget-initState-中最重要的-createStore-的操作：" class="headerlink" title="_PageWidget() - initState 中最重要的 createStore 的操作："></a><code>_PageWidget()</code> - <strong><code>initState</code> 中最重要的 <code>createStore</code> 的操作：</strong></h5><p><img src="/images/fish-redux-configuration/code-snippet-page-create-store.png" alt="code-snippet-page-create-store"></p>
+<ul>
+<li><code>_initState(param)</code>: UserHomePage 中定义的 <code>initState</code> 在这里调用，接受路由参数对 State 进行初始化操作。</li>
+<li><code>createReducer()</code> 过程中最核心的是 <code>combineReducers</code>：<br><img src="/images/fish-redux-configuration/code-snippet-combineReducers.png" alt="code-snippet-combineReducers"><ul>
+<li>入参 <code>[protectedReducer, protectedDependenciesReducer]</code>： 1. <code>protectedReducer</code> 就是我们自己在 <code>reducer.dart</code> 文件中定义的 <code>buildReducer()</code>； 2.  <code>protectedDependenciesReducer</code> 指的就是 依赖的子组件的 reducer，也是通过类似 <code>combineReducers</code> 的方式生成的(后文「createReducer - 生成子组件的 Reducer」部分再来看一下这个过程 )。</li>
+<li><code>combineReducers</code>：会做一些 reducer 的判空过滤，最终返回一个 colsure —— Reducer，在后续的 dispatch 相关操作时会执行。</li>
+</ul>
+</li>
+</ul>
+<h5 id="createReducer-生成子组件的-Reducer"><a href="#createReducer-生成子组件的-Reducer" class="headerlink" title="createReducer - 生成子组件的 Reducer"></a><strong>createReducer - 生成子组件的 Reducer</strong></h5><p><img src="/images/fish-redux-configuration/code-snippet-Dependencies-class.png" alt="code-snippet-Dependencies-class"></p>
+<ul>
+<li><code>slots</code> 就是我们在 <code>page.dart</code> 中定义的依赖子组件， <code>createReducer()</code> 中通过循环遍历创建子组件(<code>createSubReducer()</code>)的 <code>reducer</code> 列表，最后通过上文中相同的 <code>combineReducers</code>  以及 <code>combineSubReducers</code> 把 reducer 结合起来。</li>
+<li><code>createSubReducer()</code>  最终是执行 <code>connector.subReducer(logic.createReducer())</code> （redux_component&#x2F;dependent.dart）:<ul>
+<li><code>logic.createReducer()</code> 其实就是执行 <code>logic.dart</code> 中的 <code>createReducer()</code>。</li>
+<li><code>connector.subReducer(…)</code> 最终执行 <code>MutableConn</code>  的 <code>subReducer()</code>：<br><img src="/images/fish-redux-configuration/code-snippet-MutableConn-class.png" alt="code-snippet-MutableConn-class"><ol>
+<li><code>get</code> ：上文 <code>ToolsConnector</code>  父子组件状态连接器中自己定义的，让子组件获取相应状态数据；</li>
+<li>根据 action 和 props 生成新的状态，并且与老的 state 进行对比；</li>
+<li>如果有变化 clone 一份新的返回，并且通知 view 改变相应状态，否则直接返回当前 state。</li>
+</ol>
+</li>
+</ul>
+</li>
+<li><code>combineReducers</code> 与上文一致， <code>combineSubReducers</code> 核心最终还是会调用 上文中的 <code>subReducer</code> 。</li>
+</ul>
+<h5 id="PageWidget-build-相关操作"><a href="#PageWidget-build-相关操作" class="headerlink" title="_PageWidget() - build()  相关操作"></a><code>_PageWidget()</code> - <code>build()</code>  相关操作</h5><p><img src="/images/fish-redux-configuration/code-snippet-ComponentWidget-class-build.png" alt="code-snippet-ComponentWidget-class-build"></p>
+<p><code>build()</code> 最终调用链路会到 <code>ComponentWidget</code>, 也是一个 <code>StatefulWidget</code>，主要做了两件事情：</p>
+<ol>
+<li><code>void initState()</code> ：根据 store、bus 等创建一个 context，这个 context 会在整个页面周期中使用。比如页面中渲染子组件的操作 —— <code>viewService.buildComponent(&#39;your-component-name&#39;)</code>。</li>
+<li><code>Widget build(BuildContext context)</code>： 真正创建视图的地方<br><img src="/images/fish-redux-configuration/code-snippet-ComponentContext-class-build.png" alt="assets/code-snippet-ComponentContext-class-build"></li>
+</ol>
+<p>以上就是 Fish Redux 整个自动配置组装的过程，也简单说了下首次渲染的部分。</p>
+<h2 id="最后"><a href="#最后" class="headerlink" title="最后"></a>最后</h2><p>源码解析部分并没有把所有细节都阐述，如果感兴趣的朋友欢迎一起探讨。</p>
+<p>有任何问题欢迎关注 「百瓶技术」公众号后发消息提问，会第一时间回复。</p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p>[^1]: <a target="_blank" rel="noopener" href="https://redux.js.org/">Redux</a> <a target="_blank" rel="noopener" href="https://redux.js.org/">https://redux.js.org</a><br>[^2]: <a target="_blank" rel="noopener" href="https://github.com/alibaba/fish-redux">GitHub Fish Redux 源码</a> (2019-03-06 开源）<a target="_blank" rel="noopener" href="https://github.com/alibaba/fish-redux">https://github.com/alibaba/fish-redux</a><br>[^3]: <a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/8vFDLq3WaeImyQNb--8ZyQ">闲鱼技术：Flutter Fish Redux 架构演进 2.0</a> (2021-05-18）<a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/8vFDLq3WaeImyQNb--8ZyQ">https://mp.weixin.qq.com/s/8vFDLq3WaeImyQNb--8ZyQ</a>)<br>[^4]: Google Protocol Buffers: <a target="_blank" rel="noopener" href="https://developers.google.com/protocol-buffers">https://developers.google.com/protocol-buffers</a><br>[^5]: Fish Redux 官方例子：<a target="_blank" rel="noopener" href="https://github.com/alibaba/fish-redux/tree/master/example">https://github.com/alibaba/fish-redux/tree/master/example</a><br>[^6]: Visual Studio Code Fish Redux Template Extension: <a target="_blank" rel="noopener" href="https://marketplace.visualstudio.com/items?itemName=huangjianke.fish-redux-template">https://marketplace.visualstudio.com/items?itemName=huangjianke.fish-redux-template</a><br>[^7]: Flutter architectural overview: <a target="_blank" rel="noopener" href="https://flutter.dev/docs/resources/architectural-overview">https://flutter.dev/docs/resources/architectural-overview</a><br>[^8]: Flutter StatefulWidget: <a target="_blank" rel="noopener" href="https://api.flutter.dev/flutter/widgets/StatefulWidget-class.html">https://api.flutter.dev/flutter/widgets/StatefulWidget-class.html</a><br>[^9]: Fish Redux 官方文档：<a target="_blank" rel="noopener" href="https://github.com/alibaba/fish-redux/blob/master/docs/zh-cn/README.md">https://github.com/alibaba/fish-redux/blob/master/docs/zh-cn/README.md</a><br>[^10]: Flutter Fish_Redux 3.0起航！：<a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/YYyU2yoM61VuApz9FsUxQw">https://mp.weixin.qq.com/s/YYyU2yoM61VuApz9FsUxQw</a></p>
+
+            </div>
+
+            <!-- Comments -->
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                
+    <hr />
+    <h3>Comments:</h3>
+    <div id="disqus_thread">
+        <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    </div>
+
+
+
+            </div>
+        </div>
+    </div>
+</article>
+
+    <!-- Footer -->
+    <hr />
+
+<!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                    <li>
+                        <a href="https://github.com/nepaul" target="_blank">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                    <!-- <li>
+                        <a href="https://twitter.com/xsnepaul" target="_blank">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://medium.com/@nepaul" target="_blank">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-medium fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li> -->
+                </ul>
+                <p class="copyright text-muted">      &copy; 2023 nepaul&nbsp;
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>, theme by <a target="_blank" rel="noopener" href="https://github.com/klugjo/hexo-theme-clean-blog">Clean Blog</a></p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+
+    <!-- After footer scripts -->
+    
+<!-- jQuery -->
+<!-- 
+<script src="/js/jquery.min.js"></script>
+ -->
+<script src="//lib.baomitu.com/jquery/2.2.4/jquery.min.js"></script>
+
+<!-- Bootstrap -->
+<!-- 
+<script src="/bootstrap/js/bootstrap.min.js"></script>
+ -->
+<script src="//lib.baomitu.com/twitter-bootstrap/3.3.6/js/bootstrap.min.js"></script>
+
+<!-- Gallery -->
+<!-- <script src="//cdn.rawgit.com/noelboss/featherlight/1.3.5/release/featherlight.min.js" type="text/javascript" charset="utf-8"></script> -->
+<script src="//lib.baomitu.com/featherlight/1.3.5/featherlight.min.js"></script>
+
+<!-- Disqus Comments -->
+
+<script type="text/javascript">
+    var disqus_shortname = '';
+
+    (function(){
+        var dsq = document.createElement('script');
+        dsq.type = 'text/javascript';
+        dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+</body>
+
+</html>

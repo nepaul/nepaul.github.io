@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!--Description-->
+    
+        <meta name="description" content="背景在一些小项目或者说小公司中，开发人员往往要兼顾运维的工作。举个例子，当一个网站的新功能开发完毕后需要部署上线的时候，大致的步骤：通过 ssh 登录 CentOS，CD project-dir，update code，build，start server …
+重复，枯燥乏味！很多时候都希望有个人来">
+    
+
+    <!--Author-->
+    
+        <meta name="author" content="nepaul">
+    
+
+    <!--Open Graph Title-->
+    
+        <meta property="og:title" content="ChatOps: Slack  + Hubot"/>
+    
+
+    <!--Open Graph Site Name-->
+    <meta property="og:site_name" content="DesignBytes"/>
+
+    <!--Page Cover-->
+    
+        <meta property="og:image" content=""/>
+    
+
+    
+        <link rel="icon" href="favicon/favicon.ico">
+    
+    <!-- Title -->
+    
+    <title>ChatOps: Slack  + Hubot - DesignBytes</title>
+
+    <!-- Bootstrap Core CSS -->
+    <!-- 
+<link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css">
+ -->
+    <link href="//lib.baomitu.com/twitter-bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+
+    <!-- Custom Fonts -->
+    <link href="//lib.baomitu.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <style>
+        @font-face{font-family:Lora;font-style:normal;font-weight:regular;src:url(//lib.baomitu.com/fonts/lora/lora-regular.eot);src:local('Lora'),local('Lora-Normal'),url(//lib.baomitu.com/fonts/lora/lora-regular.eot?#iefix) format('embedded-opentype'),url(//lib.baomitu.com/fonts/lora/lora-regular.woff2) format('woff2'),url(//lib.baomitu.com/fonts/lora/lora-regular.woff) format('woff'),url(//lib.baomitu.com/fonts/lora/lora-regular.ttf) format('truetype'),url(//lib.baomitu.com/fonts/lora/lora-regular.svg#Lora) format('svg')}@font-face{font-family:Lora;font-style:normal;font-weight:700;src:url(//lib.baomitu.com/fonts/lora/lora-700.eot);src:local('Lora'),local('Lora-Normal'),url(//lib.baomitu.com/fonts/lora/lora-700.eot?#iefix) format('embedded-opentype'),url(//lib.baomitu.com/fonts/lora/lora-700.woff2) format('woff2'),url(//lib.baomitu.com/fonts/lora/lora-700.woff) format('woff'),url(//lib.baomitu.com/fonts/lora/lora-700.ttf) format('truetype'),url(//lib.baomitu.com/fonts/lora/lora-700.svg#Lora) format('svg')}@font-face{font-family:Lora;font-style:italic;font-weight:regular;src:url(//lib.baomitu.com/fonts/lora/lora-italic.eot);src:local('Lora'),local('Lora-Italic'),url(//lib.baomitu.com/fonts/lora/lora-italic.eot?#iefix) format('embedded-opentype'),url(//lib.baomitu.com/fonts/lora/lora-italic.woff2) format('woff2'),url(//lib.baomitu.com/fonts/lora/lora-italic.woff) format('woff'),url(//lib.baomitu.com/fonts/lora/lora-italic.ttf) format('truetype'),url(//lib.baomitu.com/fonts/lora/lora-italic.svg#Lora) format('svg')}@font-face{font-family:Lora;font-style:italic;font-weight:700;src:url(//lib.baomitu.com/fonts/lora/lora-700italic.eot);src:local('Lora'),local('Lora-Italic'),url(//lib.baomitu.com/fonts/lora/lora-700italic.eot?#iefix) format('embedded-opentype'),url(//lib.baomitu.com/fonts/lora/lora-700italic.woff2) format('woff2'),url(//lib.baomitu.com/fonts/lora/lora-700italic.woff) format('woff'),url(//lib.baomitu.com/fonts/lora/lora-700italic.ttf) format('truetype'),url(//lib.baomitu.com/fonts/lora/lora-700italic.svg#Lora) format('svg')}@font-face{font-family:'Open Sans';font-style:italic;font-weight:300;src:url(//lib.baomitu.com/fonts/open-sans/open-sans-300italic.eot);src:local('Open Sans'),local('OpenSans-Italic'),url(//lib.baomitu.com/fonts/open-sans/open-sans-300italic.eot?#iefix) format('embedded-opentype'),url(//lib.baomitu.com/fonts/open-sans/open-sans-300italic.woff2) format('woff2'),url(//lib.baomitu.com/fonts/open-sans/open-sans-300italic.woff) format('woff'),url(//lib.baomitu.com/fonts/open-sans/open-sans-300italic.ttf) format('truetype'),url(//lib.baomitu.com/fonts/open-sans/open-sans-300italic.svg#OpenSans) format('svg')}@font-face{font-family:'Open Sans';font-style:italic;font-weight:regular;src:url(//lib.baomitu.com/fonts/open-sans/open-sans-italic.eot);src:local('Open Sans'),local('OpenSans-Italic'),url(//lib.baomitu.com/fonts/open-sans/open-sans-italic.eot?#iefix) format('embedded-opentype'),url(//lib.baomitu.com/fonts/open-sans/open-sans-italic.woff2) format('woff2'),url(//lib.baomitu.com/fonts/open-sans/open-sans-italic.woff) format('woff'),url(//lib.baomitu.com/fonts/open-sans/open-sans-italic.ttf) format('truetype'),url(//lib.baomitu.com/fonts/open-sans/open-sans-italic.svg#OpenSans) format('svg')}@font-face{font-family:'Open Sans';font-style:italic;font-weight:600;src:url(//lib.baomitu.com/fonts/open-sans/open-sans-600italic.eot);src:local('Open Sans'),local('OpenSans-Italic'),url(//lib.baomitu.com/fonts/open-sans/open-sans-600italic.eot?#iefix) format('embedded-opentype'),url(//lib.baomitu.com/fonts/open-sans/open-sans-600italic.woff2) format('woff2'),url(//lib.baomitu.com/fonts/open-sans/open-sans-600italic.woff) format('woff'),url(//lib.baomitu.com/fonts/open-sans/open-sans-600italic.ttf) format('truetype'),url(//lib.baomitu.com/fonts/open-sans/open-sans-600italic.svg#OpenSans) format('svg')}@font-face{font-family:'Open Sans';font-style:italic;font-weight:700;src:url(//lib.baomitu.com/fonts/open-sans/open-sans-700italic.eot);src:local('Open Sans'),local('OpenSans-Italic'),url(//lib.baomitu.com/fonts/open-sans/open-sans-700italic.eot?#iefix) format('embedded-opentype'),url(//lib.baomitu.com/fonts/open-sans/open-sans-700italic.woff2) format('woff2'),url(//lib.baomitu.com/fonts/open-sans/open-sans-700italic.woff) format('woff'),url(//lib.baomitu.com/fonts/open-sans/open-sans-700italic.ttf) format('truetype'),url(//lib.baomitu.com/fonts/open-sans/open-sans-700italic.svg#OpenSans) format('svg')}@font-face{font-family:'Open Sans';font-style:italic;font-weight:800;src:url(//lib.baomitu.com/fonts/open-sans/open-sans-800italic.eot);src:local('Open Sans'),local('OpenSans-Italic'),url(//lib.baomitu.com/fonts/open-sans/open-sans-800italic.eot?#iefix) format('embedded-opentype'),url(//lib.baomitu.com/fonts/open-sans/open-sans-800italic.woff2) format('woff2'),url(//lib.baomitu.com/fonts/open-sans/open-sans-800italic.woff) format('woff'),url(//lib.baomitu.com/fonts/open-sans/open-sans-800italic.ttf) format('truetype'),url(//lib.baomitu.com/fonts/open-sans/open-sans-800italic.svg#OpenSans) format('svg')}@font-face{font-family:'Open Sans';font-style:normal;font-weight:regular;src:url(//lib.baomitu.com/fonts/open-sans/open-sans-regular.eot);src:local('Open Sans'),local('OpenSans-Normal'),url(//lib.baomitu.com/fonts/open-sans/open-sans-regular.eot?#iefix) format('embedded-opentype'),url(//lib.baomitu.com/fonts/open-sans/open-sans-regular.woff2) format('woff2'),url(//lib.baomitu.com/fonts/open-sans/open-sans-regular.woff) format('woff'),url(//lib.baomitu.com/fonts/open-sans/open-sans-regular.ttf) format('truetype'),url(//lib.baomitu.com/fonts/open-sans/open-sans-regular.svg#OpenSans) format('svg')}@font-face{font-family:'Open Sans';font-style:normal;font-weight:300;src:url(//lib.baomitu.com/fonts/open-sans/open-sans-300.eot);src:local('Open Sans'),local('OpenSans-Normal'),url(//lib.baomitu.com/fonts/open-sans/open-sans-300.eot?#iefix) format('embedded-opentype'),url(//lib.baomitu.com/fonts/open-sans/open-sans-300.woff2) format('woff2'),url(//lib.baomitu.com/fonts/open-sans/open-sans-300.woff) format('woff'),url(//lib.baomitu.com/fonts/open-sans/open-sans-300.ttf) format('truetype'),url(//lib.baomitu.com/fonts/open-sans/open-sans-300.svg#OpenSans) format('svg')}@font-face{font-family:'Open Sans';font-style:normal;font-weight:600;src:url(//lib.baomitu.com/fonts/open-sans/open-sans-600.eot);src:local('Open Sans'),local('OpenSans-Normal'),url(//lib.baomitu.com/fonts/open-sans/open-sans-600.eot?#iefix) format('embedded-opentype'),url(//lib.baomitu.com/fonts/open-sans/open-sans-600.woff2) format('woff2'),url(//lib.baomitu.com/fonts/open-sans/open-sans-600.woff) format('woff'),url(//lib.baomitu.com/fonts/open-sans/open-sans-600.ttf) format('truetype'),url(//lib.baomitu.com/fonts/open-sans/open-sans-600.svg#OpenSans) format('svg')}@font-face{font-family:'Open Sans';font-style:normal;font-weight:700;src:url(//lib.baomitu.com/fonts/open-sans/open-sans-700.eot);src:local('Open Sans'),local('OpenSans-Normal'),url(//lib.baomitu.com/fonts/open-sans/open-sans-700.eot?#iefix) format('embedded-opentype'),url(//lib.baomitu.com/fonts/open-sans/open-sans-700.woff2) format('woff2'),url(//lib.baomitu.com/fonts/open-sans/open-sans-700.woff) format('woff'),url(//lib.baomitu.com/fonts/open-sans/open-sans-700.ttf) format('truetype'),url(//lib.baomitu.com/fonts/open-sans/open-sans-700.svg#OpenSans) format('svg')}@font-face{font-family:'Open Sans';font-style:normal;font-weight:800;src:url(//lib.baomitu.com/fonts/open-sans/open-sans-800.eot);src:local('Open Sans'),local('OpenSans-Normal'),url(//lib.baomitu.com/fonts/open-sans/open-sans-800.eot?#iefix) format('embedded-opentype'),url(//lib.baomitu.com/fonts/open-sans/open-sans-800.woff2) format('woff2'),url(//lib.baomitu.com/fonts/open-sans/open-sans-800.woff) format('woff'),url(//lib.baomitu.com/fonts/open-sans/open-sans-800.ttf) format('truetype'),url(//lib.baomitu.com/fonts/open-sans/open-sans-800.svg#OpenSans) format('svg')}
+    </style>
+    <!-- <link href="//fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" rel="stylesheet" type="text/css"> -->
+    <!-- <link href="//fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css"> -->
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- Gallery -->
+    <!-- <link href="//cdn.rawgit.com/noelboss/featherlight/1.3.5/release/featherlight.min.css" type="text/css" rel="stylesheet" /> -->
+    <link href="//lib.baomitu.com/featherlight/1.3.5/featherlight.min.css" rel="stylesheet">
+
+    <!-- Google Analytics -->
+    
+    <script>
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+                    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+                m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+        ga('create', 'UA-63590316-1', 'auto');
+        ga('send', 'pageview');
+
+    </script>
+
+
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+
+    <!-- Menu -->
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">DesignBytes</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav navbar-right">
+                
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+                
+                    <li>
+                        <a href="/archives">Archives</a>
+                    </li>
+                
+            </ul>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+
+    <!-- Main Content -->
+    <!-- Page Header -->
+<!-- Set your background image for this header in your post front-matter: cover -->
+
+<header class="intro-header" style="background-image: url('https://images.unsplash.com/photo-1452716726610-30ed68426a6b?ixlib=rb-0.3.5&q=80&fm=jpg&crop=entropy&s=eb13d4961a078aca65cfa493a8026519')">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <h1>ChatOps: Slack  + Hubot</h1>
+                    
+                    <span class="meta">
+                        <!-- Date and Author -->
+                        
+                            Posted by nepaul on
+                        
+                        2016-12-11
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+            <!-- Tags and categories -->
+           
+                <div class="col-lg-4 col-lg-offset-2 col-md-5 col-md-offset-1 post-tags">
+                    
+                        
+
+
+<a href="/tags/tool/">#tool</a>
+
+
+                    
+                </div>
+                <div class="col-lg-4 col-md-5 post-categories">
+                    
+                </div>
+            
+
+            <!-- Gallery -->
+            
+
+            <!-- Post Main Content -->
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>在一些小项目或者说小公司中，开发人员往往要兼顾运维的工作。举个例子，当一个网站的新功能开发完毕后需要部署上线的时候，大致的步骤：通过 ssh 登录 CentOS，CD project-dir，update code，build，start server …</p>
+<p>重复，枯燥乏味！很多时候都希望有个人来帮忙做这些事情。那么，有可能嘛？</p>
+<p>YES！<strong>ChatOps: Hubot + Slack</strong> ！</p>
+<h2 id="几个概念"><a href="#几个概念" class="headerlink" title="几个概念"></a>几个概念</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://hubot.github.com/">Hubot</a>: github 开源的提高生产效率工具(CoffeScript 编写, github 地址)，可以自动化很多任务。</li>
+<li><a target="_blank" rel="noopener" href="https://slack.com/">Slack</a>: 湾区已经流行很久的集聊天群组、文件整合、 统一搜索、 大规模工具等于一体的团队协作工具。</li>
+<li>ChatOps: Chat + Ops, 简单来说，通过聊天完成软件部署。关于 ChatOps，<a target="_blank" rel="noopener" href="http://www.infoq.com/cn/articles/interpretation-of-chatops-open-source-chat-robot-hubot">这篇文章</a>阐述的不错，推荐！</li>
+</ul>
+<p>简单的理解：Hubot 只是一个可定制并执行很多自动化任务的小程序（可以部署在本地或云端，当然必须联网），通过从 Slack 获取的 Token，两者很好的集成。从而让可以在 Slack 通过与 Hubot 聊天来完成一系列的自动化任务。算是一个 智能机器人 了。有趣新颖，再也不怕部署环境了。</p>
+<p>下面开始介绍怎么创造一个“智能机器人”。</p>
+<h2 id="机器环境"><a href="#机器环境" class="headerlink" title="机器环境"></a>机器环境</h2><p>可以将 Hubot 部署在本机或者云端，云端推荐用 <a target="_blank" rel="noopener" href="https://www.heroku.com/">Heroku</a>（一般免费账户基本够用）。</p>
+<p>暂时部署在本地：macOS Sierra(我的主力开发机) &amp; Ubuntu Server 16.04(web 服务器)。</p>
+<p>以下主要演示在 macOS 上的操作，Ubuntu 没有太多本质差异。</p>
+<h2 id="Hubot"><a href="#Hubot" class="headerlink" title="Hubot"></a>Hubot</h2><h4 id="安装和配置"><a href="#安装和配置" class="headerlink" title="安装和配置"></a>安装和配置</h4><ol>
+<li>安装 NodeJS（<a target="_blank" rel="noopener" href="https://nodejs.org/en/download/package-manager">官网不同操作系统详细安装教程</a></li>
+<li>通过 npm 安装 <code>coffee-script</code> <code>hubot</code> <code>yo</code> <code>generator-hubot</code> 以便生成和执行 hubot</li>
+<li>用 <a target="_blank" rel="noopener" href="https://github.com/github/generator-hubot">yeoman generator</a> 生成 Hubot</li>
+<li>配置 Hubot</li>
+</ol>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 1. 安装 NodeJS</span></span><br><span class="line">brew update</span><br><span class="line">brew install node </span><br><span class="line"></span><br><span class="line"><span class="comment"># 2. 安装 coffee-script hubot yo generator-hubot</span></span><br><span class="line"><span class="comment"># 推荐墙内的小伙伴用 cnpm -&gt; [npm install -g cnpm --registry=https://registry.npm.taobao.org]</span></span><br><span class="line">npm install -g coffee-script hubot yo generator-hubot</span><br><span class="line"></span><br><span class="line"><span class="comment"># 3. 生成 hubot</span></span><br><span class="line"><span class="built_in">mkdir</span> my-hubot &amp;&amp; <span class="built_in">cd</span> my-hubot</span><br><span class="line">yo hubot --adapter=slack</span><br><span class="line"><span class="comment"># 上面命令执行中，会有一系列的交互操作全部回车默认即可。成功后会在该目录下生成一系列的文件。</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 4. 配置 Hubot</span></span><br><span class="line"><span class="comment"># Hubot 默认集成了 hubot-redis-brain hubot-heroku-keepalive，这里暂时不需要</span></span><br><span class="line">npm uninstall --save hubot-redis-brain hubot-heroku-keepalive</span><br><span class="line"><span class="comment"># 成功后从 external-scripts.json 文件中删除 hubot-redis-brain hubot-heroku-keepalive</span></span><br><span class="line"><span class="comment"># 删除 hubot-script.json</span></span><br><span class="line"><span class="built_in">rm</span> -rf hubot-scripts.json</span><br><span class="line"></span><br><span class="line"><span class="comment"># DONE！</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="调戏一下-Hubot"><a href="#调戏一下-Hubot" class="headerlink" title="调戏一下 Hubot"></a>调戏一下 Hubot</h4><p>默认已经安装了一些插件，可以在 <code>extrenal-scripts.json</code> 文件中查看，对应插件的用法直接 Google 。</p>
+<p>试一下 <code>hubot-help</code>，这个插件不用多说。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 在 my-hubot 目录下，启动 Hubot</span></span><br><span class="line">⇒  bin/hubot</span><br><span class="line">my-hubot&gt;</span><br><span class="line">my-hubot&gt; my-hubot <span class="built_in">help</span></span><br><span class="line">my-hubot&gt; Shell: my-hubot adapter - Reply with the adapter</span><br><span class="line">my-hubot animate me &lt;query&gt; - The same thing as `image me`, except adds a few parameters to try to <span class="built_in">return</span> an animated GIF instead.</span><br><span class="line">my-hubot <span class="built_in">echo</span> &lt;text&gt; - Reply back with &lt;text&gt;</span><br><span class="line">my-hubot <span class="built_in">help</span> - Displays all of the <span class="built_in">help</span> commands that Hubot knows about.</span><br><span class="line">my-hubot <span class="built_in">help</span> &lt;query&gt; - Displays all <span class="built_in">help</span> commands that match &lt;query&gt;.</span><br><span class="line">my-hubot image me &lt;query&gt; - The Original. Queries Google Images <span class="keyword">for</span> &lt;query&gt; and returns a random top result.</span><br><span class="line">my-hubot map me &lt;query&gt; - Returns a map view of the area returned by `query`.</span><br><span class="line">my-hubot mustache me &lt;url|query&gt; - Adds a mustache to the specified URL or query result.</span><br><span class="line">my-hubot ping - Reply with pong</span><br><span class="line">my-hubot pug bomb N - get N pugs</span><br><span class="line">my-hubot pug me - Receive a pug</span><br><span class="line">my-hubot the rules - Make sure hubot still knows the rules.</span><br><span class="line">my-hubot time - Reply with current time</span><br><span class="line">my-hubot translate me &lt;phrase&gt; - Searches <span class="keyword">for</span> a translation <span class="keyword">for</span> the &lt;phrase&gt; and <span class="keyword">then</span> prints that bad boy out.</span><br><span class="line">my-hubot translate me from &lt;<span class="built_in">source</span>&gt; into &lt;target&gt; &lt;phrase&gt; - Translates &lt;phrase&gt; from &lt;<span class="built_in">source</span>&gt; into &lt;target&gt;. Both &lt;<span class="built_in">source</span>&gt; and &lt;target&gt; are optional</span><br><span class="line">ship it - Display a motivation squirrel</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h2 id="Slack"><a href="#Slack" class="headerlink" title="Slack"></a>Slack</h2><ol>
+<li>注册登录</li>
+<li>安装 Hubot 插件，成功后会自动生成一个 Token</li>
+<li>记录 Token 以便后续与本地的 Hubot 集成</li>
+</ol>
+<h2 id="让-Slack-与-Hubot-一起工作"><a href="#让-Slack-与-Hubot-一起工作" class="headerlink" title="让 Slack 与 Hubot 一起工作"></a>让 Slack 与 Hubot 一起工作</h2><h4 id="配置与启动"><a href="#配置与启动" class="headerlink" title="配置与启动"></a>配置与启动</h4><ol>
+<li>本地配置启动：非常简单，在 my-hubot 目录下执行一行命令即可，成功后会显示 “Slack client now connected”：</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">HUBOT_SLACK_TOKEN=&lt;your slack token&gt; ./bin/hubot -a slack</span><br></pre></td></tr></table></figure>
+
+<ol start="2">
+<li><p>切到 Slack，可以在 Slack 里与 Hubot 对话了！跟你在本地打命令行一样，只是不用打前面的 my-hubot 了。</p>
+</li>
+<li><p>在启动 hubot 的时候，不想每次都输入这么难记的命令。可以直接在 <code>package.json</code> 文件里加如下几行：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">&quot;scripts&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;start&quot;</span><span class="punctuation">:</span> <span class="string">&quot;./bin/hubot&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;slack&quot;</span><span class="punctuation">:</span> <span class="string">&quot;HUBOT_SLACK_TOKEN=xoxxxsdfabjZLBhrVrgY ./bin/hubot --adapter slack&quot;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>本地启动：<code>npm start</code></li>
+<li>集成到 Slack 启动：<code>npm run slack</code></li>
+</ul>
+</li>
+</ol>
+<h4 id="利用-hubot-script-shellcmd-来部署项目"><a href="#利用-hubot-script-shellcmd-来部署项目" class="headerlink" title="利用 hubot-script-shellcmd 来部署项目"></a>利用 hubot-script-shellcmd 来部署项目</h4><p><code>hubot-script-shellcmd</code> 顾名思义， 就是一个执行 shell 脚本的插件。</p>
+<p>已经将之前那个 my-hubot 移植到了作为 Web 服务器的 Ubunter-Server-16 上（操作都是一样的）</p>
+<ol>
+<li><p>安装 <code>npm i --save hubot-script-shellcmd</code>，在 external-scripts.json 中配置 <code>hubot-script-shellcmd</code></p>
+</li>
+<li><p><code>cp -R node_modules/hubot-script-shellcmd/bash .</code></p>
+</li>
+<li><p>在 <code>bash/handlers</code> 目录下新增一个 shell 脚本，例如 deploy</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">#</span><span class="language-bash">!/bin/bash</span></span><br><span class="line">echo &quot;Deploy ...&quot;</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">部署中想做的一些操作 ...</span></span><br><span class="line">echo &quot;Successfully!&quot;</span><br><span class="line"></span><br><span class="line">exit 0</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><code>npm run slack</code></p>
+</li>
+<li><p>在 Slack 中执行 shellcmd deploy，效果图如下：</p>
+<p><img src="http://7xja18.com1.z0.glb.clouddn.com/slack-hubot.png" alt="slack-hubot-image"></p>
+</li>
+</ol>
+<h2 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h2><p>Hubot 还能做更多事情。</p>
+<p>可以用已有的很多插件完成丰富而有趣的事情。当然，也可以自己写 CoffeeScript 来完成更复杂的操作。</p>
+<p>下一步打算用他将我 Hexo 博客文章的发布流程自动化一下。</p>
+<p>另外，我是从 <a target="_blank" rel="noopener" href="https://wanqu.co/b/7/2015-05-24-behind-the-scenes.html?s=/blog">「湾区日报是如何运作的?</a>」知道了 Slack + Hubot 这么个有趣的组合的。湾区日报每天推送五篇好文，推荐给大家。</p>
+
+            </div>
+
+            <!-- Comments -->
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                
+    <hr />
+    <h3>Comments:</h3>
+    <div id="disqus_thread">
+        <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    </div>
+
+
+
+            </div>
+        </div>
+    </div>
+</article>
+
+    <!-- Footer -->
+    <hr />
+
+<!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                    <li>
+                        <a href="https://github.com/nepaul" target="_blank">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                    <!-- <li>
+                        <a href="https://twitter.com/xsnepaul" target="_blank">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://medium.com/@nepaul" target="_blank">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-medium fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li> -->
+                </ul>
+                <p class="copyright text-muted">      &copy; 2023 nepaul&nbsp;
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>, theme by <a target="_blank" rel="noopener" href="https://github.com/klugjo/hexo-theme-clean-blog">Clean Blog</a></p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+
+    <!-- After footer scripts -->
+    
+<!-- jQuery -->
+<!-- 
+<script src="/js/jquery.min.js"></script>
+ -->
+<script src="//lib.baomitu.com/jquery/2.2.4/jquery.min.js"></script>
+
+<!-- Bootstrap -->
+<!-- 
+<script src="/bootstrap/js/bootstrap.min.js"></script>
+ -->
+<script src="//lib.baomitu.com/twitter-bootstrap/3.3.6/js/bootstrap.min.js"></script>
+
+<!-- Gallery -->
+<!-- <script src="//cdn.rawgit.com/noelboss/featherlight/1.3.5/release/featherlight.min.js" type="text/javascript" charset="utf-8"></script> -->
+<script src="//lib.baomitu.com/featherlight/1.3.5/featherlight.min.js"></script>
+
+<!-- Disqus Comments -->
+
+<script type="text/javascript">
+    var disqus_shortname = '';
+
+    (function(){
+        var dsq = document.createElement('script');
+        dsq.type = 'text/javascript';
+        dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+</body>
+
+</html>
